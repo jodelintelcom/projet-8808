@@ -1,0 +1,5 @@
+/.venv
+*.pyc
+*/node_modules*
+src/assets/data/2014_LoL_esports_match_data_from_OraclesElixir.csv
+src/assets/data/2015_LoL_esports_match_data_from_OraclesElixir.csv
