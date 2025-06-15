@@ -14,7 +14,6 @@ DATA_PATH = DATA_DIR / "2024_LoL_esports_match_data_from_OraclesElixir.csv"
 df = pd.read_csv(DATA_PATH, low_memory=False)
 
 api_key=os.environ.get("OPENAI_API_KEY"),
-print("api key : ", api_key)
 
 df['win'] = df['result'].map({1:1, 0:0})
 teams_data = (
