@@ -1,16 +1,22 @@
 import pandas as pd
 import plotly.graph_objects as go
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, no_update
 from utils import lol_stats
 from pathlib import Path
 import os
 from openai import OpenAI
+import json
 
 
 # ——— Load and Preprocess Data Globally ———
 SRC_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = SRC_DIR / "assets" / "data"
 DATA_PATH = DATA_DIR / "2024_LoL_esports_match_data_from_OraclesElixir.csv"
+
+# Load team logos mapping
+with open(DATA_DIR / "team_logos.json") as f:
+    team_logo_map = json.load(f)
+
 df = pd.read_csv(DATA_PATH, low_memory=False)
 
 api_key=os.environ.get("OPENAI_API_KEY"),
@@ -176,11 +182,27 @@ def layout():
                         'backdropFilter': 'blur(10px)'
                     }),
                     
-                    # Radar Chart
+                    # Radar Chart with tooltip
                     html.Div([
                         dcc.Graph(
                             id='radar-chart',
-                            style={'height': '500px'}
+                            style={'height': '500px'},
+                            config=dict(
+                                scrollZoom=False,
+                                showTips=False,
+                                showAxisDragHandles=False,
+                                doubleClick=False,
+                                displayModeBar=False,
+                            )
+                        ),
+                        dcc.Tooltip(
+                            id="radar-tooltip", 
+                            style={
+                                "padding": "8px", 
+                                'background': '#343434', 
+                                'border-radius': '15px',
+                                'border': '1px solid #667eea'
+                            }
                         )
                     ], style={
                         'width': '48%',
@@ -278,8 +300,7 @@ def update_radar(selected_patch, selected_teams):
         theta = categories + [categories[0]]
         
         color = enhanced_palette[i % len(enhanced_palette)]
-        #team_logo_url = get_team_logo_url(team)
-        team_logo_url = "https://logos-world.net/wp-content/uploads/2022/04/Cloud-9-Emblem.png"
+        team_logo_url = team_logo_map.get(team, "https://th.bing.com/th/id/R.b83e6fea403a390bd06ae17c187408e3?rik=0gNevZjLwsaBIQ&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fleague-of-legends-png-league-of-legends-icon-png-256.png&ehk=WK0IcxgqxDlcZy4wdwkPjXEMlcDqS%2fnq8dbr9E7AFGs%3d&risl=&pid=ImgRaw&r=0")
 
         fig.add_trace(go.Scatterpolar(
             r=values,
@@ -288,18 +309,10 @@ def update_radar(selected_patch, selected_teams):
             name=team,
             line=dict(color=color, width=3),
             fillcolor=f'rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)',
-            # Clean hover template without image
-            hovertemplate=f'''
-            <b style="color: {color}; font-size: 14px;">{team}</b><br>
-            <b>%{{theta}}</b><br>
-            <span style="color: {color}; font-weight: bold;">Score: %{{r:.2f}}</span>
-            <extra></extra>
-            ''',
-            hoverlabel=dict(
-                bgcolor='rgba(26, 32, 44, 0.95)',
-                bordercolor=color,
-                font=dict(color='#e9ecef', size=12, family='Inter')
-            )
+            # Add custom data for tooltip
+            customdata=[[team_logo_url, team] + values[:-1]] * len(values),
+            hoverinfo="none",
+            hovertemplate=None
         ))
 
     fig.update_layout(
@@ -341,9 +354,94 @@ def update_radar(selected_patch, selected_teams):
         margin=dict(t=60, b=30, l=30, r=120),
         paper_bgcolor='rgba(26, 32, 44, 0.0)',
         plot_bgcolor='rgba(26, 32, 44, 0.0)',
-        font=dict(family='Inter', color='#e9ecef')
+        font=dict(family='Inter', color='#e9ecef'),
+        hovermode="closest"
     )
     return fig
+
+# ——— Tooltip Callback for Radar Chart ———
+@callback(
+    Output("radar-tooltip", "show"),
+    Output("radar-tooltip", "bbox"),
+    Output("radar-tooltip", "children"),
+    Input("radar-chart", "hoverData"),
+)
+def display_radar_hover(hoverData):
+    if not hoverData:
+        return False, no_update, no_update
+
+    pt = hoverData["points"][0]
+    bbox = pt["bbox"]
+    
+    # Extract custom data
+    team_logo_url = pt["customdata"][0]
+    team_name = pt["customdata"][1]
+    metric_name = pt["theta"]
+    metric_value = pt["r"]
+    
+    # Map theta to user-friendly names
+    metric_display_names = {
+        'Dragon Control': 'Dragon Control',
+        'Baron Control': 'Baron Control', 
+        'First Blood': 'First Blood',
+        'Rift Heralds': 'Rift Heralds',
+        'Void Grubs': 'Void Grubs',
+        'Gold@15min': 'Gold Advantage @15min',
+        'Vision Score': 'Vision Score',
+        'Win Rate': 'Win Rate'
+    }
+    
+    display_name = metric_display_names.get(metric_name, metric_name)
+    
+    children = [
+        html.Div(
+            children=[
+                html.Div(
+                    children=[
+                        html.Img(
+                            src=team_logo_url, 
+                            style={
+                                "width": "48px", 
+                                "height": "48px", 
+                                "border-radius": "8px",
+                                "margin-right": "10px",
+                                'display': 'inline-block'
+                            }
+                        ), 
+                        html.P(
+                            team_name, 
+                            style={
+                                'color': '#EDEADE', 
+                                'display': 'inline-block',
+                                'font-size': '16px',
+                                'font-weight': 'bold',
+                                'margin': '0',
+                                'vertical-align': 'middle'
+                            }
+                        ) 
+                    ],
+                    style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '8px'}
+                ),
+                html.P(
+                    display_name, 
+                    style={
+                        'color': '#667eea', 
+                        "margin-bottom": "4px",
+                        'font-weight': 'bold'
+                    }
+                ),
+                html.P(
+                    f"Score: {metric_value:.2f}", 
+                    style={
+                        "color": "#EDEADE", 
+                        "margin-bottom": "0",
+                        'font-size': '14px'
+                    }
+                ),
+            ],
+        )
+    ]
+    return True, bbox, children
 
 # ——— Enhanced Line Chart Callback ———
 @callback(
@@ -405,6 +503,7 @@ def update_linechart(selected_teams):
         hovermode='x unified'
     )
     return fig
+    
 
 # ——— Enhanced GPT Summary Callback ———
 @callback(
@@ -563,5 +662,3 @@ def generate_summary(patch, teams):
             html.P(f"⚠️ Error generating analysis: {str(e)}", 
                    style={'color': '#fd746c', 'textAlign': 'center', 'fontStyle': 'italic'})
         ])
-    
-
