@@ -70,7 +70,7 @@ def get_plot(df):
         color = 'position',
         hover_name='champion',
         opacity = 0.95,
-        custom_data = ['icon_url']
+        custom_data = ['icon_url', 'champion', 'total_plays', 'win_rate', 'position']
     )
     return fig
 
@@ -158,7 +158,7 @@ def layout():
             doubleClick=False,
             displayModeBar=False,
         )),
-        dcc.Tooltip(id="graph-tooltip"),
+        dcc.Tooltip(id="graph-tooltip", style={"padding": "8px", 'background' : '#343434', 'border-radius' : '15px'}),
     ])
 ])
 
@@ -219,10 +219,29 @@ def display_hover(hoverData):
 
     pt = hoverData["points"][0]
     bbox     = pt["bbox"]
-    icon_url = pt["customdata"][0]   
+    icon_url = pt["customdata"][0] 
 
-    children = [ html.Img(src=icon_url, style={"width":"48px","height":"48px"}) ]
+    champion_name = pt["customdata"][1]
+    match_count = pt["customdata"][2]
+    win_rate = pt["customdata"][3]
+    position = pt['customdata'][4]
 
+    children = [ 
+        html.Div(
+            children = [
+                            html.Div(children = [
+                html.Img(src=icon_url, style={"width":"48px","height":"48px", 'display' : 'inline-block'}), 
+                html.P(champion_name, style={'color': '#EDEADE', 'display' : 'inline-block', 'padding-left' : '10px'}) 
+                ],
+            ),
+            html.P(position, style={'color': '#E4C678', "margin-bottom" : "0"}),
+            html.P(f"{match_count} games played", style={'color': '#EDEADE', "margin-bottom" : "0"}),
+             html.P(f"{win_rate:.1f}% win rate", style={"color": "#EDEADE", "margin-bottom" : "0"}),
+            ],
+            #style = {'background' : '#343434'}
+
+        )
+    ]
     return True, bbox, children
 
 
