@@ -42,6 +42,12 @@ def layout():
                 n_clicks=0,
                 class_name="mb-1"
             ),
+            dbc.NavLink(
+                "Champion Duos Lollipop chart",
+                id="nav-lollipop",
+                n_clicks=0,
+                class_name="mb-1"
+            ),
             # Ajouter ici comme les autres
         ],
         vertical=True,
