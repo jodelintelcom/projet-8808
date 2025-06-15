@@ -135,12 +135,39 @@ def update_radar(selected_patch, selected_teams):
     fig.update_layout(
         template='plotly_dark',
         polar=dict(
-            radialaxis=dict(visible=True, range=[0,1]),
-            bgcolor='#272822'
+            radialaxis=dict(
+                visible=True, 
+                range=[0,1],
+                showline=False,
+                gridcolor='rgba(161, 176, 216, 0.3)',
+                tickcolor='#a1b0d8'
+            ),
+            angularaxis=dict(
+                gridcolor='rgba(161, 176, 216, 0.3)',
+                linecolor='rgba(161, 176, 216, 0.5)'
+            ),
+            bgcolor='rgba(39, 40, 34, 0.8)'
         ),
         showlegend=True,
-        title=f"Team Radar Comparison — Patch: {selected_patch}",
-        margin=dict(t=80, b=30)
+        legend=dict(
+            orientation='v',
+            yanchor='top',
+            y=1,
+            xanchor='left',
+            x=1.02,
+            bgcolor='rgba(39, 40, 34, 0.8)',
+            bordercolor='rgba(161, 176, 216, 0.3)',
+            borderwidth=1
+        ),
+        title=dict(
+            text=f"Team Radar Comparison — Patch: {selected_patch}",
+            font=dict(size=20, color='#a1b0d8'),
+            x=0.5,
+            y=0.95
+        ),
+        margin=dict(t=80, b=30, l=30, r=120),
+        paper_bgcolor='rgba(39, 40, 34, 0)',
+        plot_bgcolor='rgba(39, 40, 34, 0)'
     )
     return fig
 
@@ -309,9 +336,8 @@ def generate_summary(patch, teams):
                     if part:
                         elements.append(html.B(part))
             return elements
-
-
-         # Process paragraphs and parse bold text
+        
+        # Process paragraphs and parse bold text
         paragraphs = []
         for paragraph in html_content.split("\n\n"):
             if paragraph.strip():
