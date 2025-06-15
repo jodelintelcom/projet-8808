@@ -86,27 +86,43 @@ def get_hovertemplate():
 
 
 def update_axes(fig):
-    fig.update_xaxes(title_text='Match Played')
-    fig.update_yaxes(title_text='Winning Rate (%)')
+    fig.update_xaxes(
+        title_text='Match Played',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+        )
+    
+    
+    fig.update_yaxes(
+        title_text='Winning Rate (%)',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+        )
 
     return fig
 
 
 def make_figure():
     fig = get_plot(filter_df)
-    fig.update_layout(height=600, 
-                  width=1000, 
+    fig.update_layout(height=800, 
+                  width=1336, 
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
                   plot_bgcolor = "#2c2f3e",
                   paper_bgcolor = "#2c2f3e",
                   legend_title = 'Champion Roles',
+                  hovermode="closest",
+                  hoverdistance=10,
                   font=dict(
                     family="Beaufort, sans-serif",
                     size=12,
-                    color="#fff"
-                    )
+                    color="#E4C678"
+                    ),
                 )
     fig.update_traces(marker=dict(size=18), hoverinfo="none", hovertemplate=None)
     fig.update_layout(hovermode="closest")
@@ -120,8 +136,7 @@ def layout():
 
     return html.Div(className='champions', children=[
     html.Header(children=[
-        html.H1('Champions Stats'),
-        html.H2('LoL')
+        html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678'})
     ]),
     html.Main(className='viz-container', children=[
         html.Div(
@@ -131,24 +146,32 @@ def layout():
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
                 placeholder='Select year',
                 clearable=True,
-                style={ 'width': '200px'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434', 'color' : '#E4C678'}
             ),
             dcc.Dropdown(
                 id='patch-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
                 placeholder='Select patch',
                 clearable=True,
-                style={'width': '200px'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434' , 'color' : '#E4C678'}
             ),
             dcc.Dropdown(
                 id='champion_name-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
                 placeholder='Select Champion',
                 clearable=True,
-                style={'width': '200px'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434', 'color' : '#E4C678'}
             )
             ],
-            style = {'display' : 'inline-block'}
+            style = {
+                'display' : 'inline-block', 
+                'height' : '800px', 
+                'width' : '220px',
+                'border' : '2px solid #192841', 
+                'border-radius' : '15px', 
+                'margin-right' : '30px',
+                'background' : '#2c2f3e'
+            }
         )
         ,
         dcc.Graph(id='graph', className='graph', figure=fig, config=dict(
@@ -157,6 +180,7 @@ def layout():
             showAxisDragHandles=False,
             doubleClick=False,
             displayModeBar=False,
+            clear_on_unhover=True,
         )),
         dcc.Tooltip(id="graph-tooltip", style={"padding": "8px", 'background' : '#343434', 'border-radius' : '15px'}),
     ])
@@ -184,18 +208,20 @@ def update_output_div(year_value, patch_value, champion_value):
     new_filter_df = preprocess(df, year=year_value, patch=patch_value, champion = champion_value)
     new_fig = get_plot(new_filter_df)
     
-    new_fig.update_layout(height=600, 
-                  width=1000, 
+    new_fig.update_layout(height=800, 
+                  width=1336, 
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
                   plot_bgcolor = "#2c2f3e",
                   paper_bgcolor = "#2c2f3e",
                   legend_title = 'Champion Roles',
+                  hovermode="closest",
+                  hoverdistance=10,
                   font=dict(
                     family="Beaufort, sans-serif",
                     size=12,
-                    color="#fff"
+                    color="#E4C678"
                     )
                 )
     
@@ -214,7 +240,7 @@ def update_output_div(year_value, patch_value, champion_value):
     Input("graph", "hoverData"),
 )
 def display_hover(hoverData):
-    if not hoverData:
+    if hoverData is None:
         return False, no_update, no_update
 
     pt = hoverData["points"][0]
@@ -238,7 +264,6 @@ def display_hover(hoverData):
             html.P(f"{match_count} games played", style={'color': '#EDEADE', "margin-bottom" : "0"}),
              html.P(f"{win_rate:.1f}% win rate", style={"color": "#EDEADE", "margin-bottom" : "0"}),
             ],
-            #style = {'background' : '#343434'}
 
         )
     ]
