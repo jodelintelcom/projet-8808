@@ -1,0 +1,36 @@
+name: Check server loads without crashing
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --no-cache-dir -r requirements.txt
+
+      - name: Check if server crashes
+        run: |
+          python -c "import sys; sys.path.append('./src'); import server"
+
+      - name: Start server in background
+        run: |
+          python src/server.py &
+          sleep 10
+
+      - name: Ping the app
+        run: curl --fail http://127.0.0.1:8050 || (echo "App failed to start" && exit 1)
+
+      - name: Success Yeyy
+        run: echo "App responded successfully Team 21!! Yeyyyy"
