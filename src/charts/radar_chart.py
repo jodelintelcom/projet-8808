@@ -288,7 +288,18 @@ def update_radar(selected_patch, selected_teams):
             name=team,
             line=dict(color=color, width=3),
             fillcolor=f'rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)',
-            hovertemplate='<b>%{theta}</b><br><b>%{r:.2f}</b><br><i>' + team + '</i><extra></extra>'
+            # Clean hover template without image
+            hovertemplate=f'''
+            <b style="color: {color}; font-size: 14px;">{team}</b><br>
+            <b>%{{theta}}</b><br>
+            <span style="color: {color}; font-weight: bold;">Score: %{{r:.2f}}</span>
+            <extra></extra>
+            ''',
+            hoverlabel=dict(
+                bgcolor='rgba(26, 32, 44, 0.95)',
+                bordercolor=color,
+                font=dict(color='#e9ecef', size=12, family='Inter')
+            )
         ))
 
     fig.update_layout(
@@ -552,3 +563,5 @@ def generate_summary(patch, teams):
             html.P(f"⚠️ Error generating analysis: {str(e)}", 
                    style={'color': '#fd746c', 'textAlign': 'center', 'fontStyle': 'italic'})
         ])
+    
+
