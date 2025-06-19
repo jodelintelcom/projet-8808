@@ -119,12 +119,31 @@ label{
     cursor: pointer;
 }
 
+/* Spinner color */
 .dash-spinner {
-    color: #FF4081 !important;
+    color: #00FFAA !important;       /* fallback */
+    border-top-color: #00FFAA !important;
+    border-right-color: #00FFAA !important;
 }
 
+
 .gpt-summary{
-    
+    padding: 14px;
+}
+
+.summary-div {
+    background-color: #1E1E1E;     /* Dark theme box */
+    border: 1px solid #444;        /* Thin border */
+    border-radius: 10px;           /* Rounded corners */
+    padding: 1.5rem;               /* Inner spacing */
+    margin-top: 1.5rem;            /* Space above */
+                    /* Text color */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) ; /* Soft shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.summary-div:hover {
+    box-shadow: 0 6px 16px #E4C678; /* Slight hover effect */
 }
 
 

@@ -210,9 +210,8 @@ def layout():
         className= "small-dropdown"
     ),
     dcc.Loading(id="loading-graph",children= dcc.Graph(id='lollipop-chart'), type="default"),
- 
-     dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_lollipop"), type="circle",className="gpt-summary")
-    ])
+    html.Div( dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_lollipop"), type="circle"), className="summary-div")
+    ], id = "lollipop-container", className="lollipop-container-dv")
     
 
     
@@ -283,6 +282,6 @@ def _generate_gpt_summary(top_k):
                 parsed_elements = parse_bold_text(paragraph.strip())
                 paragraphs.append(html.P(parsed_elements))
         
-        return html.Div(paragraphs)
+        return html.Div(paragraphs, className="gpt-summary")
     except Exception as e:
         return f"Error generating summary: {str(e)}"
