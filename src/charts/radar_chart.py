@@ -82,9 +82,6 @@ def layout():
                         'padding': '20px 0',
                         'fontSize': '2.5rem',
                         'fontWeight': '700',
-                        'background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        'WebkitBackgroundClip': 'text',
-                        'WebkitTextFillColor': 'transparent',
                         'textShadow': '0 2px 4px rgba(0,0,0,0.3)'
                     }
                 ),
@@ -164,7 +161,7 @@ def layout():
                                     'padding': '15px',
                                     'fontSize': '0.95rem',
                                     'lineHeight': '1.6',
-                                    'backgroundColor': 'rgba(45, 55, 72, 0.5)',
+                                    'backgroundColor': '#1a1b1e',
                                     'borderRadius': '8px',
                                     'border': '1px solid #4a5568',
                                     'scrollbarWidth': 'thin',
@@ -246,7 +243,6 @@ def layout():
             ])
         ]
     )
-
 # ——— Enhanced Radar Chart Callback ———
 @callback(
     Output('radar-chart','figure'),
@@ -300,7 +296,6 @@ def update_radar(selected_patch, selected_teams):
         theta = categories + [categories[0]]
         
         color = enhanced_palette[i % len(enhanced_palette)]
-        team_logo_url = team_logo_map.get(team, "https://th.bing.com/th/id/R.b83e6fea403a390bd06ae17c187408e3?rik=0gNevZjLwsaBIQ&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fleague-of-legends-png-league-of-legends-icon-png-256.png&ehk=WK0IcxgqxDlcZy4wdwkPjXEMlcDqS%2fnq8dbr9E7AFGs%3d&risl=&pid=ImgRaw&r=0")
 
         fig.add_trace(go.Scatterpolar(
             r=values,
@@ -309,10 +304,14 @@ def update_radar(selected_patch, selected_teams):
             name=team,
             line=dict(color=color, width=3),
             fillcolor=f'rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)',
-            # Add custom data for tooltip
-            customdata=[[team_logo_url, team] + values[:-1]] * len(values),
-            hoverinfo="none",
-            hovertemplate=None
+            # Enhanced hover template with forced background styling
+            hovertemplate="<span style='background-color: rgba(16, 26, 32, 0.95); padding: 8px; " +
+                         "border: 2px solid #C89B3C; border-radius: 6px; display: block;'>" +
+                         "<b style='color: #F0E6D2; font-size: 14px;'>%{fullData.name}</b><br>" +
+                         "<span style='color: #C89B3C; font-weight: bold;'>%{theta}</span><br>" +
+                         "<span style='color: #CDBE91;'>Score: %{r:.2f}</span>" +
+                         "</span>" +
+                         "<extra></extra>"
         ))
 
     fig.update_layout(
@@ -342,12 +341,12 @@ def update_radar(selected_patch, selected_teams):
             x=1.02,
             bgcolor='rgba(26, 32, 44, 0.8)',
             bordercolor='rgba(102, 126, 234, 0.3)',
-            borderwidth=1,
             font=dict(size=11, color='#e9ecef')
         ),
+        
         title=dict(
             text=f"Team Performance Radar — {selected_patch}",
-            font=dict(size=18, color='#e9ecef', family='Inter'),
+            font=dict(size=24, color='#a1b0d8', family='Inter'),
             x=0.5,
             y=0.95
         ),
@@ -355,93 +354,21 @@ def update_radar(selected_patch, selected_teams):
         paper_bgcolor='rgba(26, 32, 44, 0.0)',
         plot_bgcolor='rgba(26, 32, 44, 0.0)',
         font=dict(family='Inter', color='#e9ecef'),
-        hovermode="closest"
+        hovermode="closest",
+        # Override any default hover styling to ensure consistent appearance
+        hoverlabel=dict(
+            bgcolor="rgba(16, 26, 32, 0.95)",
+            bordercolor="#C89B3C",
+            font=dict(
+                size=12,
+                color="#F0E6D2",
+                family="Inter"
+            ),
+            align="left"
+        )
     )
     return fig
 
-# ——— Tooltip Callback for Radar Chart ———
-@callback(
-    Output("radar-tooltip", "show"),
-    Output("radar-tooltip", "bbox"),
-    Output("radar-tooltip", "children"),
-    Input("radar-chart", "hoverData"),
-)
-def display_radar_hover(hoverData):
-    if not hoverData:
-        return False, no_update, no_update
-
-    pt = hoverData["points"][0]
-    bbox = pt["bbox"]
-    
-    # Extract custom data
-    team_logo_url = pt["customdata"][0]
-    team_name = pt["customdata"][1]
-    metric_name = pt["theta"]
-    metric_value = pt["r"]
-    
-    # Map theta to user-friendly names
-    metric_display_names = {
-        'Dragon Control': 'Dragon Control',
-        'Baron Control': 'Baron Control', 
-        'First Blood': 'First Blood',
-        'Rift Heralds': 'Rift Heralds',
-        'Void Grubs': 'Void Grubs',
-        'Gold@15min': 'Gold Advantage @15min',
-        'Vision Score': 'Vision Score',
-        'Win Rate': 'Win Rate'
-    }
-    
-    display_name = metric_display_names.get(metric_name, metric_name)
-    
-    children = [
-        html.Div(
-            children=[
-                html.Div(
-                    children=[
-                        html.Img(
-                            src=team_logo_url, 
-                            style={
-                                "width": "48px", 
-                                "height": "48px", 
-                                "border-radius": "8px",
-                                "margin-right": "10px",
-                                'display': 'inline-block'
-                            }
-                        ), 
-                        html.P(
-                            team_name, 
-                            style={
-                                'color': '#EDEADE', 
-                                'display': 'inline-block',
-                                'font-size': '16px',
-                                'font-weight': 'bold',
-                                'margin': '0',
-                                'vertical-align': 'middle'
-                            }
-                        ) 
-                    ],
-                    style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '8px'}
-                ),
-                html.P(
-                    display_name, 
-                    style={
-                        'color': '#667eea', 
-                        "margin-bottom": "4px",
-                        'font-weight': 'bold'
-                    }
-                ),
-                html.P(
-                    f"Score: {metric_value:.2f}", 
-                    style={
-                        "color": "#EDEADE", 
-                        "margin-bottom": "0",
-                        'font-size': '14px'
-                    }
-                ),
-            ],
-        )
-    ]
-    return True, bbox, children
 
 # ——— Enhanced Line Chart Callback ———
 @callback(
