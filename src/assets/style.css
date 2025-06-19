@@ -1,13 +1,33 @@
 @font-face {
     font-family: "Beaufort";
-    src: url("./fonts/BeaufortforLOL-Bold.ttf") format("truetype");
+    src: url("./font/BeaufortforLOL-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Beaufort-reg";
+    src: url("./font/BeaufortforLOL-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Beaufort-med-italic";
+    src: url("./font/BeaufortforLOL-MediumItalic.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Beaufort-med";
+    src: url("./font/BeaufortforLOL-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Beaufort-heavy";
+    src: url("./font/BeaufortforLOL-Heavy.ttf") format("truetype");
 }
 
 
 body {
     font-family: 'Arial', 'sans-serif';
     font-size: 16px;
-    color: #362023;
+    color: #E4C678;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -25,7 +45,10 @@ main {
     height: 100%;
     padding-right: 25px;
 }
-
+p{
+    font-family: 'Beaufort-med-italic';
+    padding: 4px;
+}
 .content {
     display: flex;
     flex-direction: column;
@@ -44,13 +67,83 @@ main {
 }
 
 h1 {
-    font-family: 'Times', 'serif';
+    font-family: 'Beaufort';
     font-size: 56px;
     margin: 0;
     font-weight: normal;
+    color: #E4C678;
 }
 
 h2 {
+    font-family: 'Beaufort-heavy';
     font-weight: normal;
+    color: #E4C678;
 }
+label{
+    font-family: 'Beaufort-med';
+    padding: 4px;
+
+}
+.small-dropdown {
+    font-family: 'Beaufort-reg';
+    font-size: 20px;
+    background-color: #1E1E11;
+    border-radius: 5px;
+    width: 180px;
+    padding: 4px;
+    color: #E4C678;
+}
+
+/* react-select styles override */
+.small-dropdown .Select-control {
+    background-color: #1E1E11 !important;
+    border: 1px solid #ccc !important;
+    box-shadow: navajowhite !important;
+}
+
+.small-dropdown .Select-placeholder,
+.small-dropdown .Select-value {
+    color: #E4C678 !important;
+    width: 160px;
+}
+
+.small-dropdown .VirtualizedSelectOption {
+    background-color: #1E1E11;
+    color: #E4C678;
+    font-size: 20px;
+    padding: 6px 10px;
+}
+
+.small-dropdown .VirtualizedSelectOption:hover {
+    background-color: #444 !important;
+    cursor: pointer;
+}
+
+/* Spinner color */
+.dash-spinner {
+    color: #00FFAA !important;       /* fallback */
+    border-top-color: #00FFAA !important;
+    border-right-color: #00FFAA !important;
+}
+
+
+.gpt-summary{
+    padding: 14px;
+}
+
+.summary-div {
+    background-color: #1E1E1E;     /* Dark theme box */
+    border: 1px solid #444;        /* Thin border */
+    border-radius: 10px;           /* Rounded corners */
+    padding: 1.5rem;               /* Inner spacing */
+    margin-top: 1.5rem;            /* Space above */
+                    /* Text color */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) ; /* Soft shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.summary-div:hover {
+    box-shadow: 0 6px 16px #E4C678; /* Slight hover effect */
+}
+
 

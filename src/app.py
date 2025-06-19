@@ -8,6 +8,7 @@ from charts.scatter_chart import layout as scatter_layout
 from charts.lollipop_chart import layout as lollipop_layout
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.title = "LoL Esports Insights Visualization"
 
 CONTENT_STYLE = {
     "margin-left": f"calc({SIDEBAR_STYLE['width']} + 2rem)",

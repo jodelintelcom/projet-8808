@@ -8,6 +8,8 @@ import plotly.graph_objects as go
 from dash import html, dcc, Input, Output,callback
 import numpy as np
 from plotly.colors import sample_colorscale
+from openai import OpenAI
+import time
 
 
 SRC_DIR = Path(__file__).resolve().parent.parent
@@ -76,6 +78,19 @@ def select_top_k(pair_counts:pd.DataFrame, top_k=5)->pd.DataFrame:
 
 
 df = load_data()
+
+def create_gpt_data(top_k):
+    pair_counts = preprocess_lollipop(df)
+    top_pairs = select_top_k(pair_counts, top_k)
+    top_pairs.loc[:,'pair'] = top_pairs['pair'].apply(
+        lambda t: f"{t[0]} & {t[1]}" if isinstance(t, tuple) else str(t)
+    )
+    counts = top_pairs['count']
+    pairs = top_pairs['pair']
+    norm_counts = (counts - counts.min()) / (counts.max() - counts.min())
+    colors = sample_colorscale("teal", norm_counts.tolist())
+
+    return list(zip(pairs.to_list(),counts.to_list(),colors))
 
 def create_lollipop(top_k = 5)->go.Figure:
     pair_counts = preprocess_lollipop(df)
@@ -157,7 +172,13 @@ def create_lollipop(top_k = 5)->go.Figure:
         template="plotly_dark",
         plot_bgcolor="#272822",
         paper_bgcolor="#272822",
-        font=dict(size=14),
+         hovermode="closest",
+        hoverdistance=10,
+        font=dict(
+                    family="Beaufort",
+                    size=12,
+                    color="#E4C678"
+                    ),
         xaxis=dict(
         range=[-0.5, len(top_pairs) - 0.5],  
             tickmode='array',
@@ -186,17 +207,11 @@ def layout():
         options=[{'label': str(k), 'value': k} for k in [3, 5, 7, 10]],
         value=5,
         clearable=False,
-        style={'width': '200px','bg': "black"}
+        className= "small-dropdown"
     ),
-    dcc.Graph(id='lollipop-chart'),
-    html.Div([
-        html.H2("Description:"),
-        html.P("This lollipop chart visualization illustrates the number of games played by bot and support champions paired together. These two roles are picked as they are the only two who play on the game lane at the start of a match. It highlights the number of games for each specific champion duo.")
-    ])
-    ],
-    style={"backgroundColor": "#272822", "color": "#F8F8F2",
-               "fontFamily": "Cinzel, serif", "padding": "1rem"},
-    )
+    dcc.Loading(id="loading-graph",children= dcc.Graph(id='lollipop-chart'), type="default"),
+    html.Div( dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_lollipop"), type="circle"), className="summary-div")
+    ], id = "lollipop-container", className="lollipop-container-dv")
     
 
     
@@ -207,3 +222,66 @@ def layout():
 def _update_chart(top_k):
     
     return create_lollipop(top_k)
+
+@callback(
+     Output('gpt-summary_lollipop','children'),
+     Input('top-k-dropdown', 'value')
+ )
+
+def _generate_gpt_summary(top_k):
+    #time.sleep(3)
+   # return html.P(f"summary {top_k} ")
+    lollipop_data = create_gpt_data(top_k)
+
+    prompt = f"You are a data analyst, given top {top_k} champions duos, you created a lollipop chart with this data\ \
+    for those duos: data = {lollipop_data}\n \
+    - the first element of the tuple is champions names(i.e champion 1 & champion 2)\n \
+    - the second element is the number of games they palyed together\n\
+    - the last element is the color of the head of the sticks \
+    Write in an analytical but engaging tone (2-3 short paragraphs), a summary of the chart\n \
+                Avoid technical jargon and focus on storytelling that highlights what makes each team unique.\
+    "
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    try:
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful esports analyst who provides engaging performance summaries."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        html_content = response.choices[0].message.content.strip()
+        if not html_content:
+            return "No summary generated... "
+        
+        # Parse **bold** text and convert to HTML
+        def parse_bold_text(text):
+            import re
+            # Split text by **bold** patterns
+            parts = re.split(r'\*\*(.*?)\*\*', text)
+            elements = []
+            for i, part in enumerate(parts):
+                if i % 2 == 0:  # Regular text
+                    if part:
+                        elements.append(part)
+                else:  # Bold text
+                    if part:
+                        elements.append(html.B(part))
+            return elements
+        
+        # Process paragraphs and parse bold text
+    #time.sleep(3)
+        paragraphs = [html.H2("Summary:")]
+        #return html.H2(f"Summary: {top_k}")
+        for paragraph in html_content.split("\n\n"):
+            if paragraph.strip():
+                parsed_elements = parse_bold_text(paragraph.strip())
+                paragraphs.append(html.P(parsed_elements))
+        
+        return html.Div(paragraphs, className="gpt-summary")
+    except Exception as e:
+        return f"Error generating summary: {str(e)}"
