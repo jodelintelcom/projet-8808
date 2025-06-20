@@ -2,7 +2,6 @@ from dash import Dash, html, dcc, Output, Input, callback, ctx
 import dash_bootstrap_components as dbc
 from components.sidebar import layout as sidebar_layout, SIDEBAR_STYLE
 from charts.role_heatmap import layout as h_layout
-from charts.vision_scatter import layout as v_layout
 from charts.radar_chart import layout as r_layout
 from charts.scatter_chart import layout as scatter_layout
 from charts.lollipop_chart import layout as lollipop_layout
@@ -32,15 +31,18 @@ app.index_string = """
 """
 
 CONTENT_STYLE = {
-    "margin-left": f"calc({SIDEBAR_STYLE['width']} + 2rem)",
-    "padding": "2rem 1rem",
+    "margin-left": SIDEBAR_STYLE['width'],  # Simplified - just use sidebar width
+    "padding": "1rem",
+    "height": "100vh",
+    "overflow": "auto",
+    "flex": "1",  # Take remaining space
+    "minWidth": "0"  # Allow flexbox to shrink
 }
 
 def serve_layout():
     return html.Div([
         dcc.Location(id="url"),
         html.Div(id="page-content")
-
     ])
 
 app.layout = serve_layout
@@ -56,7 +58,7 @@ def display_page(pathname):
                 sidebar_layout(),
                 html.Div(id="main-dashboard", style=CONTENT_STYLE)
             ],
-            style={"display": "flex"}
+            style={"display": "flex", "height": "100vh", "width": "100vw"}  # Flex container
         )
     else:
         return html.Div(
@@ -70,21 +72,15 @@ def display_page(pathname):
     className="landing-wrapper"
 )
 
-
-
 @callback(
-     Output("main-dashboard", "children"),
-    Input("nav-vision",  "n_clicks"),
+    Output("main-dashboard", "children"),
     Input("nav-heatmap", "n_clicks"),
     Input("nav-radar",   "n_clicks"),
     Input("nav-scatter", "n_clicks"),
     Input("nav-lollipop", "n_clicks"),
     prevent_initial_call=True,
 )
-
-def render_chart(n_vision, n_heat, n_radar, n_scatter, n_lollipop): 
-    if ctx.triggered_id == "nav-vision":
-        return v_layout()
+def render_chart(n_heat, n_radar, n_scatter, n_lollipop): 
     if ctx.triggered_id == "nav-heatmap":
         return h_layout()
     if ctx.triggered_id == "nav-radar":
@@ -93,7 +89,7 @@ def render_chart(n_vision, n_heat, n_radar, n_scatter, n_lollipop):
         return scatter_layout()
     if ctx.triggered_id == "nav-lollipop":
         return lollipop_layout()    
-    return v_layout()
+    return h_layout()  # Default to heatmap instead of undefined v_layout()
 
 if __name__ == "__main__":
     app.run_server(debug=True)
