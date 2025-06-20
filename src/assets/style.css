@@ -23,7 +23,7 @@
     src: url("./font/BeaufortforLOL-Heavy.ttf") format("truetype");
 }
 
-
+/* === General STYLE === */
 body {
     font-family: 'Arial', 'sans-serif';
     font-size: 16px;
@@ -94,6 +94,74 @@ label{
     color: #E4C678;
 }
 
+
+
+/* === Sidebar NavLinks hover effect === */
+.sidebar a.nav-link {
+    transition: all 0.2s ease-in-out;
+    border-radius: 6px;
+}
+
+.sidebar a.nav-link:hover {
+    background-color: #2c2f3f;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.sidebar a.nav-link:active {
+    background-color: #44475a;
+}
+
+/* === LANDING PAGE STYLE === */
+.landing-wrapper {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #1e1e2f, #2b2e42);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-content {
+    text-align: center;
+    color: #ffffff;
+    max-width: 600px;
+    padding: 2rem;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.landing-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    font-family: "Beaufort", serif;
+}
+
+.landing-subtitle {
+    font-size: 1.25rem;
+    color: #cccccc;
+    margin-bottom: 2rem;
+}
+
+.landing-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.landing-button:hover {
+    background-color: #2563eb;
+    text-decoration: none;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
 /* react-select styles override */
 .small-dropdown .Select-control {
     background-color: #1E1E11 !important;
@@ -145,5 +213,4 @@ label{
 .summary-div:hover {
     box-shadow: 0 6px 16px #E4C678; /* Slight hover effect */
 }
-
 
