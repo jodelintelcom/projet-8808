@@ -19,12 +19,6 @@ def layout():
         dbc.Nav(
             [
                 dbc.NavLink(
-                    [html.I(className="fas fa-chart-line me-2"), "Vision Scatter"],
-                    id="nav-vision",
-                    n_clicks=0,
-                    class_name="mb-2 text-white"
-                ),
-                dbc.NavLink(
                     [html.I(className="fas fa-fire me-2"), "Role Heatmap"],
                     id="nav-heatmap",
                     n_clicks=0,

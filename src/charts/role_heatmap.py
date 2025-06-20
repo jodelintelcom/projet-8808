@@ -37,19 +37,29 @@ def layout():
                 ],
                 className="mb-3",
             ),
-            dcc.Graph(id="role-heatmap", config={"displayModeBar": False}),
+            dcc.Graph(
+                id="role-heatmap", 
+                config={"displayModeBar": False},
+                style={"height": "70vh", "width": "100%", "minWidth": "800px"}  # Force minimum width
+            ),
         ],
-        style={"backgroundColor": "#272822", "color": "#F8F8F2",
-               "fontFamily": "Cinzel, serif", "padding": "1rem"},
+        style={
+            "backgroundColor": "#272822", 
+            "color": "#F8F8F2",
+            "fontFamily": "Cinzel, serif", 
+            "padding": "1rem",
+            "height": "100vh",  # Full viewport height
+            "width": "100%",    # Full width
+            "boxSizing": "border-box"  # Include padding in height calculation
+        },
     )
 
-# ---- Callback (Dash 2 +: pas besoin d’app dans la signature) --------------
+# ---- Callback (Dash 2 +: pas besoin d'app dans la signature) --------------
 @callback(
     Output("role-heatmap", "figure"),
     Input("heatmap-patch", "value"),
     Input("heatmap-metric", "value"),
 )
-
 def _update_heatmap(patch, metric):
     data = METRICS_MAP if metric == "win_rate" else PICK_MAP
     m = data[patch]
@@ -88,5 +98,12 @@ def _update_heatmap(patch, metric):
         title=f"{patch} – {'Win' if metric == 'win_rate' else 'Pick'} Rate",
         xaxis_title="Rank",
         yaxis_title="Role",
+        # Additional layout improvements for full-size display
+        autosize=True,
+        width=None,  # Let it expand naturally
+        height=None, # Let it expand naturally
+        margin=dict(l=80, r=40, t=80, b=80),  # Smaller right margin
+        xaxis=dict(side="bottom"),
+        yaxis=dict(side="left"),
     )
     return fig
