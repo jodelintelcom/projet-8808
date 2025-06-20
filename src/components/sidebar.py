@@ -6,51 +6,51 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "15rem",
+    "width": "16rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-    "border-right": "1px solid #dee2e6"
+    "background-color": "#1e1e2f",
+    "color": "#f8f9fa",
+    "border-right": "1px solid #343a40",
 }
 
-import dash_bootstrap_components as dbc
-
 def layout():
-    return dbc.Nav(
-        [
-            # OBLIGATOIRE : id + n_clicks=0
-            dbc.NavLink(
-                "Vision Scatter",
-                id="nav-vision",
-                n_clicks=0,        # ← crée la prop n_clicks
-                class_name="mb-1"
-            ),
-            dbc.NavLink(
-                "Role Heatmap",
-                id="nav-heatmap",
-                n_clicks=0,
-                class_name="mb-1"
-            ),
-            dbc.NavLink(
-                 "Team Radar",
-                 id="nav-radar",
-                 n_clicks=0,
-                 class_name="mb-1"
-            ),
-            dbc.NavLink(
-                "Champions Scatter map",
-                id="nav-scatter",
-                n_clicks=0,
-                class_name="mb-1"
-            ),
-            dbc.NavLink(
-                "Champion Duos Lollipop chart",
-                id="nav-lollipop",
-                n_clicks=0,
-                class_name="mb-1"
-            ),
-            # Ajouter ici comme les autres
-        ],
-        vertical=True,
-        pills=True,
-        style=SIDEBAR_STYLE
-    )
+    return html.Div([
+        html.H2("Menu", className="text-white mb-4 text-center"),
+        dbc.Nav(
+            [
+                dbc.NavLink(
+                    [html.I(className="fas fa-chart-line me-2"), "Vision Scatter"],
+                    id="nav-vision",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-fire me-2"), "Role Heatmap"],
+                    id="nav-heatmap",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-bullseye me-2"), "Team Radar"],
+                    id="nav-radar",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-crosshairs me-2"), "Champions Scatter"],
+                    id="nav-scatter",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-chart-bar me-2"), "Duos Lollipop"],
+                    id="nav-lollipop",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+            ],
+            vertical=True,
+            pills=True,
+            class_name="sidebar"
+        )
+    ], style=SIDEBAR_STYLE)
