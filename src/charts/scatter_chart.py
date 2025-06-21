@@ -174,7 +174,7 @@ def layout():
             ),
             DashModelViewer(
                 id="my-viewer",
-                src="assets/3d_animation/varus.glb", 
+                src="/assets/3d_animation/aatrox.glb", 
                 alt="3D Model Champion",
                 cameraControls=True, 
                 cameraOrbit="0deg 75deg 1.2m", 
