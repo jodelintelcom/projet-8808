@@ -20,7 +20,7 @@ dash-html-components==2.0.0
     # via dash
 dash-bootstrap-components==1.4.0
     # via dash
-dash_model_viewer==0.0.1
+dash-model-viewer==0.0.1
 dash-table==5.0.0
     # via dash
 flask==2.2.2

@@ -214,3 +214,13 @@ label{
     box-shadow: 0 6px 16px #E4C678; /* Slight hover effect */
 }
 
+
+.scatter-dropdowns {
+    width: 88%;
+    margin-top: 15px;
+    margin-left: 12px;
+    background-color: #e9ecef;
+    color: #445fa5;
+
+}
+

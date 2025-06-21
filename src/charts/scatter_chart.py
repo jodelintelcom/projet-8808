@@ -110,10 +110,8 @@ def update_axes(fig):
 def make_figure():
     fig = get_plot(filter_df)
     fig.update_layout(
-                  #height=800, 
-                  #width=1336,
                   autosize=True,
-                  margin=dict(l=40, r=40, t=0, b=40),
+                  margin=dict(l=40, r=40, t=10, b=40),
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
@@ -138,7 +136,7 @@ def make_figure():
 def layout():
     fig = make_figure()
 
-    return html.Div(className='champions', children=[
+    return html.Div(className='champions', style = {'height':'100vh','overflow':'hidden', 'margin' : '0', 'display': 'flex', 'flexDirection': 'column'}, children=[
     html.Header(style = {'margin':'0'}, children=[
         html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678', "margin": "0 0 .4rem 0",}),
         html.P(['This interactive chart presents champions win-rate between 2023-2025.', html.Br(), \
@@ -150,7 +148,7 @@ def layout():
                 ], 
                style = {'color' : '#e9ecef', 'marginBottom': '0.1rem'})
     ]),
-    html.Main(className='viz-container', style={'display' : 'flex', "gap": "0%", 'height' : '85vh', 'width' : '90%', 'marginLeft' : '5%'}, children=[
+    html.Main(className='viz-container', style={'height' : '90vh','display' : 'flex', 'flex' :'1', "gap": "0%", 'width' : '90%', 'marginLeft' : '5%'}, children=[
         html.Div(
             className='Dropdown-menus',
             children = [dcc.Dropdown(
@@ -158,21 +156,21 @@ def layout():
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
                 placeholder='Select year',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef', 'color' : '#445fa5'}
+                className='scatter-dropdowns',
             ),
             dcc.Dropdown(
                 id='patch-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
                 placeholder='Select patch',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef' , 'color' : '#445fa5'}
+                className='scatter-dropdowns',
             ),
             dcc.Dropdown(
                 id='champion_name-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
                 placeholder='Select Champion',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef', 'color' : '#445fa5'}
+                className='scatter-dropdowns',
             ),
             DashModelViewer(
                 id="my-viewer",
@@ -196,7 +194,7 @@ def layout():
         },
         )
         ,
-        dcc.Graph(id='graph', className='graph',  style={"flex": "1", "minWidth": "0", 'height':'100%'}, figure=fig, config=dict(
+        dcc.Graph(id='graph', className='graph',  style={"flex": "1", "minWidth": "0", 'height':'100%', 'overflow' : 'hidden'}, figure=fig, config=dict(
             scrollZoom=False,
             showTips=False,
             showAxisDragHandles=False,
@@ -205,7 +203,7 @@ def layout():
             clear_on_unhover=True,
             responsive=True,
         )),
-        dcc.Tooltip(id="graph-tooltip", style={"padding": "8px", 'background' : '#343434', 'border-radius' : '15px'}),
+        dcc.Tooltip(id="graph-tooltip", style={'padding': '8px', 'background' : '#343434', 'border-radius' : '15px', 'overflow': 'hidden',}),
     ])
 ])
 
@@ -232,10 +230,8 @@ def update_output_div(year_value, patch_value, champion_value):
     new_fig = get_plot(new_filter_df)
     
     new_fig.update_layout(
-                  #height=800, 
-                  #width=1336,
                   autosize=True, 
-                  margin=dict(l=40, r=40, t=0, b=40),
+                  margin=dict(l=40, r=40, t=10, b=40),
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
@@ -270,7 +266,7 @@ def display_hover(hoverData):
         return False, no_update, no_update
 
     pt = hoverData["points"][0]
-    bbox     = pt["bbox"]
+    bbox = pt["bbox"]
     icon_url = pt["customdata"][0] 
 
     champion_name = pt["customdata"][1]
