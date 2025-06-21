@@ -151,36 +151,40 @@ def layout():
     html.Main(className='viz-container', style={'height' : '90vh','display' : 'flex', 'flex' :'1', "gap": "0%", 'width' : '90%', 'marginLeft' : '5%'}, children=[
         html.Div(
             className='Dropdown-menus',
-            children = [dcc.Dropdown(
+            children = [
+            html.Label('Select Year:', style={'color': '#e9ecef', 'display' : 'block'}),
+            dcc.Dropdown(
                 id='year-dropdown',
-                options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
+                options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
                 placeholder='Select year',
                 clearable=True,
                 className='scatter-dropdowns',
             ),
+            html.Label('Select Patch:', style={'color': '#e9ecef', 'display' : 'block'}),
             dcc.Dropdown(
                 id='patch-dropdown',
-                options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
+                options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
                 placeholder='Select patch',
                 clearable=True,
                 className='scatter-dropdowns',
             ),
+            html.Label('Select Champion:', style={'color': '#e9ecef', 'display' : 'block'}),
             dcc.Dropdown(
                 id='champion_name-dropdown',
-                options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
+                options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
                 placeholder='Select Champion',
                 clearable=True,
                 className='scatter-dropdowns',
             ),
             DashModelViewer(
                 id="my-viewer",
-                src="/assets/3d_animation/aatrox.glb", 
+                src="", 
                 alt="3D Model Champion",
                 cameraControls=True, 
                 cameraOrbit="0deg 75deg 1.2m", 
                 fieldOfView="35deg",             
                 ar=True,              
-                style={"width": "80%", "height": "80%", "margin": "auto"}
+                style={"width": "60%", "height": "60%", "margin": "auto"}
             )
             ],
         style={
@@ -217,13 +221,13 @@ def layout():
 )
 def update_output_div(year_value, patch_value, champion_value):
 
-    if year_value == 'All':
+    if year_value == 'None':
         year_value = None
 
-    if patch_value == 'All':
+    if patch_value == 'None':
         patch_value = None
 
-    if champion_value == 'ALL':
+    if champion_value == 'None':
         champion_value = None
     
     new_filter_df = preprocess(df, year=year_value, patch=patch_value, champion = champion_value)
@@ -277,9 +281,9 @@ def display_hover(hoverData):
     children = [ 
         html.Div(
             children = [
-                            html.Div(children = [
-                html.Img(src=icon_url, style={"width":"48px","height":"48px", 'display' : 'inline-block'}), 
-                html.P(champion_name, style={'color': '#EDEADE', 'display' : 'inline-block', 'padding-left' : '10px'}) 
+                html.Div(children = [
+                    html.Img(src=icon_url, style={"width":"48px","height":"48px", 'display' : 'inline-block'}), 
+                    html.P(champion_name, style={'color': '#EDEADE', 'display' : 'inline-block', 'padding-left' : '10px'}) 
                 ],
             ),
             html.P(position, style={'color': '#E4C678', "margin-bottom" : "0"}),
