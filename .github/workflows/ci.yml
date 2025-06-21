@@ -27,7 +27,7 @@ jobs:
       - name: Start server in background
         run: |
           python src/server.py &
-          sleep 10
+          sleep 30
 
       - name: Ping the app
         run: curl --fail http://127.0.0.1:8050 || (echo "App failed to start" && exit 1)
