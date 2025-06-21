@@ -12,7 +12,7 @@ click==8.1.3
     # via flask
 colorama==0.4.6
     # via click
-dash==2.6.2
+dash==3.0.4
     # via -r requirements.windows.in
 dash-core-components==2.0.0
     # via dash
@@ -20,6 +20,7 @@ dash-html-components==2.0.0
     # via dash
 dash-bootstrap-components==1.4.0
     # via dash
+dash_model_viewer==0.0.1
 dash-table==5.0.0
     # via dash
 flask==2.2.2
