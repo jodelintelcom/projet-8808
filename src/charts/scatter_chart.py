@@ -8,6 +8,7 @@ import numpy as np
 from pathlib import Path
 import json
 import requests
+from dash_model_viewer import DashModelViewer
 
 
 BASE_DIR = os.path.dirname(__file__)                 
@@ -138,7 +139,7 @@ def layout():
     html.Header(children=[
         html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678'})
     ]),
-    html.Main(className='viz-container', children=[
+    html.Main(className='viz-container', style={'display' : 'flex', 'height' : '90vh', 'width' : '70vv'}, children=[
         html.Div(
             className='Dropdown-menus',
             children = [dcc.Dropdown(
@@ -146,32 +147,42 @@ def layout():
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
                 placeholder='Select year',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434', 'color' : '#E4C678'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef', 'color' : '#445fa5'}
             ),
             dcc.Dropdown(
                 id='patch-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
                 placeholder='Select patch',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434' , 'color' : '#E4C678'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef' , 'color' : '#445fa5'}
             ),
             dcc.Dropdown(
                 id='champion_name-dropdown',
                 options=[{'label' : 'All', 'value' : 'All'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
                 placeholder='Select Champion',
                 clearable=True,
-                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#343434', 'color' : '#E4C678'}
+                style={'width': '160px', 'margin-top' : '15px', 'margin-left' : '12px', 'background' : '#e9ecef', 'color' : '#445fa5'}
+            ),
+            DashModelViewer(
+                id="my-viewer",
+                src="assets/3d_animation/varus.glb", 
+                alt="3D Model Champion",
+                cameraControls=True, 
+                cameraOrbit="0deg 75deg 1.2m", 
+                fieldOfView="35deg",             
+                ar=True,              
+                style={"width": "80%", "height": "80%", "margin": "auto"}
             )
             ],
-            style = {
-                'display' : 'inline-block', 
-                'height' : '800px', 
-                'width' : '220px',
-                'border' : '2px solid #192841', 
-                'border-radius' : '15px', 
-                'margin-right' : '30px',
-                'background' : '#2c2f3e'
-            }
+        style={
+            'flex': '0 0 12%',     
+            'height': '100%',      
+            'border': '2px solid #E4C678',
+            'box-shadow': '0 0 10px #E4C678, 0 0 20px rgba(228,198,120,0.5)', 
+            'border-radius': '15px',
+            'background': '#2c2f3e',
+            'margin-right': '2%'   
+        },
         )
         ,
         dcc.Graph(id='graph', className='graph', figure=fig, config=dict(
@@ -268,6 +279,22 @@ def display_hover(hoverData):
         )
     ]
     return True, bbox, children
+
+
+@callback(
+    Output("my-viewer", "src"),        
+    Input("champion_name-dropdown", "value"),
+)
+def update_model(champion):
+
+    if not champion or champion == "All":
+        return "", {"display": "none"}
+
+    model_src = f"/assets/3d_animation/{champion}.glb"            
+    if model_src is None:
+        return ""
+
+    return model_src
 
 
 df = concat_datasets(dataset_path)
