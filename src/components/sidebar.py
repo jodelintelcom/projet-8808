@@ -42,6 +42,24 @@ def layout():
                     n_clicks=0,
                     class_name="mb-2 text-white"
                 ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-chart-bar me-2"), "Player winrate"],
+                    id="nav-playerwrbc",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-chart-bar me-2"), "Player on champions"],
+                    id="nav-playerchampbc",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
+                dbc.NavLink(
+                    [html.I(className="fas fa-chart-bar me-2"), "Win vs Loss"],
+                    id="nav-winlossbc",
+                    n_clicks=0,
+                    class_name="mb-2 text-white"
+                ),
             ],
             vertical=True,
             pills=True,

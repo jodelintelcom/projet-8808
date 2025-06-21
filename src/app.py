@@ -5,6 +5,9 @@ from charts.role_heatmap import layout as h_layout
 from charts.radar_chart import layout as r_layout
 from charts.scatter_chart import layout as scatter_layout
 from charts.lollipop_chart import layout as lollipop_layout
+from charts.winloss_barchart import layout as wlbc_layout
+from charts.winrate_barchart import layout as wrbc_layout
+from charts.champion_barchart import layout as pcbc_layout
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = "LoL Esports Insights Visualization"
@@ -78,9 +81,12 @@ def display_page(pathname):
     Input("nav-radar",   "n_clicks"),
     Input("nav-scatter", "n_clicks"),
     Input("nav-lollipop", "n_clicks"),
+    Input("nav-playerwrbc", "n_clicks"),
+    Input("nav-playerchampbc", "n_clicks"),
+    Input("nav-winlossbc", "n_clicks"),
     prevent_initial_call=True,
 )
-def render_chart(n_heat, n_radar, n_scatter, n_lollipop): 
+def render_chart(n_heat, n_radar, n_scatter, n_lollipop, n_wrbc, n_pcbc, n_wlbc): 
     if ctx.triggered_id == "nav-heatmap":
         return h_layout()
     if ctx.triggered_id == "nav-radar":
@@ -89,6 +95,12 @@ def render_chart(n_heat, n_radar, n_scatter, n_lollipop):
         return scatter_layout()
     if ctx.triggered_id == "nav-lollipop":
         return lollipop_layout()    
+    if ctx.triggered_id == "nav-playerwrbc":
+        return wrbc_layout()  
+    if ctx.triggered_id == "nav-playerchampbc":
+        return pcbc_layout()  
+    if ctx.triggered_id == "nav-winlossbc":
+        return wlbc_layout()  
     return h_layout()  # Default to heatmap instead of undefined v_layout()
 
 if __name__ == "__main__":
