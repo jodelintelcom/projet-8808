@@ -31,7 +31,7 @@ def layout():
                     class_name="mb-2 text-white"
                 ),
                 dbc.NavLink(
-                    [html.I(className="fas fa-crosshairs me-2"), "Champions Scatter"],
+                    [html.I(className="fas fa-crosshairs me-2"), "Champions Win-Rate"],
                     id="nav-scatter",
                     n_clicks=0,
                     class_name="mb-2 text-white"
