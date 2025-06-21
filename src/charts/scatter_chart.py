@@ -109,8 +109,10 @@ def update_axes(fig):
 
 def make_figure():
     fig = get_plot(filter_df)
-    fig.update_layout(height=800, 
-                  width=1336, 
+    fig.update_layout(
+                  #height=800, 
+                  #width=1336,
+                  autosize=True, 
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
@@ -139,7 +141,7 @@ def layout():
     html.Header(children=[
         html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678'})
     ]),
-    html.Main(className='viz-container', style={'display' : 'flex', 'height' : '90vh', 'width' : '70vv'}, children=[
+    html.Main(className='viz-container', style={'display' : 'flex', "gap": "2%", 'height' : '90vh', 'width' : '100%'}, children=[
         html.Div(
             className='Dropdown-menus',
             children = [dcc.Dropdown(
@@ -175,7 +177,7 @@ def layout():
             )
             ],
         style={
-            'flex': '0 0 12%',     
+            "flex": "0 0 14rem",     
             'height': '100%',      
             'border': '2px solid #E4C678',
             'box-shadow': '0 0 10px #E4C678, 0 0 20px rgba(228,198,120,0.5)', 
@@ -185,13 +187,14 @@ def layout():
         },
         )
         ,
-        dcc.Graph(id='graph', className='graph', figure=fig, config=dict(
+        dcc.Graph(id='graph', className='graph',  style={"flex": "1", "minWidth": "0"}, figure=fig, config=dict(
             scrollZoom=False,
             showTips=False,
             showAxisDragHandles=False,
             doubleClick=False,
             displayModeBar=False,
             clear_on_unhover=True,
+            responsive=True,
         )),
         dcc.Tooltip(id="graph-tooltip", style={"padding": "8px", 'background' : '#343434', 'border-radius' : '15px'}),
     ])
