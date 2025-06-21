@@ -240,7 +240,9 @@ def layout():
                     'backdropFilter': 'blur(10px)',
                     'margin': '0 20px'
                 })
-            ])
+            ]),
+            html.Footer("Powered by AI — Built with Dash and Python",
+                className="app-footer")
         ]
     )
 # ——— Enhanced Radar Chart Callback ———
