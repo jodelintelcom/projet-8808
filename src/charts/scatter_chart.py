@@ -112,7 +112,8 @@ def make_figure():
     fig.update_layout(
                   #height=800, 
                   #width=1336,
-                  autosize=True, 
+                  autosize=True,
+                  margin=dict(l=40, r=40, t=0, b=40),
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
@@ -138,10 +139,18 @@ def layout():
     fig = make_figure()
 
     return html.Div(className='champions', children=[
-    html.Header(children=[
-        html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678'})
+    html.Header(style = {'margin':'0'}, children=[
+        html.H1('League of Legends Champions Win-Rate', style = {'color' : '#E4C678', "margin": "0 0 .4rem 0",}),
+        html.P(['This interactive chart presents champions win-rate between 2023-2025.', html.Br(), \
+                'By default, the data showcased in the chart is the cumulative statistics for all years. Users can ' \
+                'however filterd the data by year, patch number and by champions to visualize specific statistics ' \
+                'during that timeframe.', html.Br(), 'With all years combined, we see that none of the champions ' \
+                'are overpowered as those who pay more matches, maintain a win-rate of 50% while chmapions with high win-rate ' \
+                ' pay less games.'
+                ], 
+               style = {'color' : '#e9ecef', 'marginBottom': '0.1rem'})
     ]),
-    html.Main(className='viz-container', style={'display' : 'flex', "gap": "2%", 'height' : '90vh', 'width' : '100%'}, children=[
+    html.Main(className='viz-container', style={'display' : 'flex', "gap": "0%", 'height' : '85vh', 'width' : '90%', 'marginLeft' : '5%'}, children=[
         html.Div(
             className='Dropdown-menus',
             children = [dcc.Dropdown(
@@ -187,7 +196,7 @@ def layout():
         },
         )
         ,
-        dcc.Graph(id='graph', className='graph',  style={"flex": "1", "minWidth": "0"}, figure=fig, config=dict(
+        dcc.Graph(id='graph', className='graph',  style={"flex": "1", "minWidth": "0", 'height':'100%'}, figure=fig, config=dict(
             scrollZoom=False,
             showTips=False,
             showAxisDragHandles=False,
@@ -222,8 +231,11 @@ def update_output_div(year_value, patch_value, champion_value):
     new_filter_df = preprocess(df, year=year_value, patch=patch_value, champion = champion_value)
     new_fig = get_plot(new_filter_df)
     
-    new_fig.update_layout(height=800, 
-                  width=1336, 
+    new_fig.update_layout(
+                  #height=800, 
+                  #width=1336,
+                  autosize=True, 
+                  margin=dict(l=40, r=40, t=0, b=40),
                   dragmode=False,
                   xaxis=dict(showgrid=False),
                   yaxis=dict(showgrid=False),
