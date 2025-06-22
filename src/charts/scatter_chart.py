@@ -196,8 +196,8 @@ def layout():
                 'By default, the data showcased in the chart is the cumulative statistics for all years. Users can ' \
                 'however filterd the data by year, patch number and by champions to visualize specific statistics ' \
                 'during that timeframe.', html.Br(), 'With all years combined, we see that none of the champions ' \
-                'are overpowered as those who pay more matches, maintain a win-rate of 50% while chmapions with high win-rate ' \
-                ' pay less games.'
+                'are overpowered as those who pay more matches, maintain a win-rate of 50% while champions with high win-rate ' \
+                ' play less games.'
                 ], 
                style = {'color' : '#e9ecef', 'marginBottom': '0.1rem'})
     ]),
