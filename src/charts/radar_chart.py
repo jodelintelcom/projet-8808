@@ -278,6 +278,61 @@ def update_radar(selected_patch, selected_teams):
         # Use existing logic for specific patch
         df_plot = norm[norm['patch'] == selected_patch]
     
+    # Filter for selected teams
+    df_plot = df_plot[df_plot['teamname'].isin(selected_teams)]
+
+    # Check if the patch has no data
+    if df_plot.empty:
+        fig = go.Figure()
+        fig.add_annotation(
+            text=f"📊 No data available for patch '{selected_patch}'<br>Try selecting a different patch",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5,
+            showarrow=False,
+            font=dict(size=18, color='#fd746c'),
+            bgcolor='rgba(26, 32, 44, 0.8)',
+            bordercolor='#fd746c',
+            borderwidth=2,
+            borderpad=20
+        )
+        fig.update_layout(
+            template='plotly_dark',
+            paper_bgcolor='rgba(26, 32, 44, 0.0)',
+            plot_bgcolor='rgba(26, 32, 44, 0.0)',
+            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            margin=dict(t=60, b=30, l=30, r=120)
+        )
+        return fig
+    
+    # Check if selected teams have data in this patch
+    available_teams = [team for team in selected_teams if not df_plot[df_plot['teamname']==team].empty]
+    
+    if not available_teams:
+        fig = go.Figure()
+        teams_text = ", ".join(selected_teams)
+        patch_text = selected_patch if selected_patch != 'All' else 'any patch'
+        fig.add_annotation(
+            text=f"❌ No data found for selected teams<br>({teams_text})<br>in {patch_text}",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5,
+            showarrow=False,
+            font=dict(size=16, color='#ffecd2'),
+            bgcolor='rgba(26, 32, 44, 0.8)',
+            bordercolor='#fcb045',
+            borderwidth=2,
+            borderpad=20
+        )
+        fig.update_layout(
+            template='plotly_dark',
+            paper_bgcolor='rgba(26, 32, 44, 0.0)',
+            plot_bgcolor='rgba(26, 32, 44, 0.0)',
+            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            margin=dict(t=60, b=30, l=30, r=120)
+        )
+        return fig
+
     categories = [
         'Dragon Control','Baron Control','First Blood',
         'Rift Heralds','Void Grubs','Gold@15min','Vision Score','Win Rate'
@@ -433,14 +488,14 @@ def update_linechart(selected_teams):
     )
     return fig
     
-
-# ——— Enhanced GPT Summary Callback ———
+# ——— Enhanced GPT Summary Callback with Patch Validation ———
 @callback(
     Output('gpt-summary', 'children'),
     Input('patch', 'value'),
     Input('teams', 'value')
 )
 def generate_summary(patch, teams):
+    # Check if no teams are selected
     if not teams:
         return html.Div([
             html.P("🎯 Select teams to generate performance analysis", 
@@ -473,11 +528,42 @@ def generate_summary(patch, teams):
         # Use existing logic for specific patch
         df_patch = norm[norm['patch'] == patch]
 
+    # Check if the patch has no data
+    if df_patch.empty:
+        return html.Div([
+            html.P([
+                "📊 No data available for patch ",
+                html.Strong(f"'{patch}'", style={'color': '#fd746c'}),
+                html.Br(),
+                "Try selecting a different patch to generate analysis."
+            ], style={'textAlign': 'center', 'color': '#fd746c', 'fontStyle': 'italic'})
+        ])
+
+    # Check which teams actually have data in this patch
+    available_teams = [team for team in teams if not df_patch[df_patch['teamname'] == team].empty]
+    
+    if not available_teams:
+        teams_text = ", ".join(teams)
+        patch_text = patch if patch != 'All' else 'any patch'
+        return html.Div([
+            html.P([
+                "❌ No data found for selected teams ",
+                html.Strong(f"({teams_text})", style={'color': '#fcb045'}),
+                html.Br(),
+                f"in {patch_text}."
+            ], style={'textAlign': 'center', 'color': '#ffecd2', 'fontStyle': 'italic'})
+        ])
+
+    # Generate summaries only for teams that have data
     summaries = []
+    teams_without_data = []
+    
     for team in teams:
         row = df_patch[df_patch['teamname'] == team]
         if row.empty:
+            teams_without_data.append(team)
             continue
+            
         metrics_values = row[metrics].iloc[0]
         
         # Add raw stats context for better analysis
@@ -523,6 +609,13 @@ def generate_summary(patch, teams):
                 summary = f"{team}: " + ", ".join(f"{k}: {v:.2f}" for k, v in metrics_values.items())
         
         summaries.append(summary)
+
+    # If no summaries were generated (shouldn't happen due to earlier checks, but safety first)
+    if not summaries:
+        return html.Div([
+            html.P("⚠️ Unable to generate analysis for the selected teams and patch.", 
+                   style={'textAlign': 'center', 'color': '#fd746c', 'fontStyle': 'italic'})
+        ])
 
     prompt_context = "across all patches" if patch == 'All' else f"in patch '{patch}'"
     
@@ -584,7 +677,20 @@ def generate_summary(patch, teams):
                     style={'marginBottom': '15px', 'textAlign': 'justify'}
                 ))
         
-        return html.Div(paragraphs)
+        # Add warning if some teams had no data
+        result_div = html.Div(paragraphs)
+        if teams_without_data:
+            warning = html.Div([
+                html.Hr(style={'border': '1px solid #fcb045', 'margin': '15px 0'}),
+                html.P([
+                    "⚠️ Note: ",
+                    html.Strong(", ".join(teams_without_data), style={'color': '#fcb045'}),
+                    f" had no data in {patch_text} and were excluded from this analysis."
+                ], style={'color': '#ffecd2', 'fontSize': '0.9rem', 'fontStyle': 'italic', 'textAlign': 'center'})
+            ])
+            result_div.children.append(warning)
+        
+        return result_div
         
     except Exception as e:
         return html.Div([
