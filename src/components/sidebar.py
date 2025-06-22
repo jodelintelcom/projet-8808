@@ -19,14 +19,14 @@ def layout():
         dbc.Nav(
             [
                 dbc.NavLink(
-                    [html.I(className="fas fa-fire me-2"), "Role Heatmap"],
-                    id="nav-heatmap",
+                    [html.I(className="fas fa-bullseye me-2"), "Team Radar"],
+                    id="nav-radar",
                     n_clicks=0,
                     class_name="mb-2 text-white"
                 ),
                 dbc.NavLink(
-                    [html.I(className="fas fa-bullseye me-2"), "Team Radar"],
-                    id="nav-radar",
+                    [html.I(className="fas fa-fire me-2"), "Role Heatmap"],
+                    id="nav-heatmap",
                     n_clicks=0,
                     class_name="mb-2 text-white"
                 ),
