@@ -201,7 +201,7 @@ def create_lollipop(top_k = 5)->go.Figure:
 def layout():
     return html.Div([
     html.H1("League of Legends Bot Lane Pairings", className="title"),
-    html.Label("Select Top K Pairs:"),
+    html.Label("Pick your top duo combos:", htmlFor="top-k-dropdown", className="game-label"),
     dcc.Dropdown(
         id='top-k-dropdown',
         options=[{'label': str(k), 'value': k} for k in [3, 5, 7, 10]],
@@ -210,7 +210,8 @@ def layout():
         className= "small-dropdown"
     ),
     dcc.Loading(id="loading-graph",children= dcc.Graph(id='lollipop-chart'), type="default"),
-    html.Div( dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_lollipop"), type="circle"), className="summary-div")
+    html.Div( dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_lollipop"), type="circle"), className="summary-div"),
+    html.Footer("Powered by AI — Built with Dash and Python",className="app-footer")
     ], id = "lollipop-container", className="lollipop-container-dv")
     
 

@@ -81,18 +81,16 @@ h2 {
 }
 label{
     font-family: 'Beaufort-med';
-    padding: 4px;
+}
+.game-label {
+    color: #eac97a; /* gold-like color */
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    display: block;
+    letter-spacing: 0.5px;
+}
 
-}
-.small-dropdown {
-    font-family: 'Beaufort-reg';
-    font-size: 20px;
-    background-color: #1E1E11;
-    border-radius: 5px;
-    width: 180px;
-    padding: 4px;
-    color: #E4C678;
-}
 
 
 
@@ -163,36 +161,61 @@ label{
 }
 
 /* react-select styles override */
-.small-dropdown .Select-control {
-    background-color: #1E1E11 !important;
-    border: 1px solid #ccc !important;
-    box-shadow: navajowhite !important;
+.small-dropdown {
+    font-family: 'Beaufort-reg', serif;
+    font-size: 20px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    width: 180px;
+    padding: 4px;
+    color: #445fa5;
 }
 
-.small-dropdown .Select-placeholder,
-.small-dropdown .Select-value {
-    color: #E4C678 !important;
-    width: 160px;
+/* Dropdown menu container */
+.small-dropdown .Select-menu-outer,
+.small-dropdown .Select-menu {
+    background-color: #e9ecef;
+    border-radius: 0 0 5px 5px;
+    
+    /*box-shadow: 0 6px 16px #E4C678;*/
 }
 
-.small-dropdown .VirtualizedSelectOption {
-    background-color: #1E1E11;
-    color: #E4C678;
+/* Dropdown options */
+.small-dropdown .Select-option {
+    color: #445fa5;
     font-size: 20px;
     padding: 6px 10px;
+    background-color: #e9ecef;
 }
 
-.small-dropdown .VirtualizedSelectOption:hover {
-    background-color: #444 !important;
+.small-dropdown .Select-option:hover {
+    background-color: #a3a8cf;
     cursor: pointer;
 }
 
-/* Spinner color */
-.dash-spinner {
-    color: #00FFAA !important;       /* fallback */
-    border-top-color: #00FFAA !important;
-    border-right-color: #00FFAA !important;
+/* Selected value */
+.small-dropdown .Select-value-label {
+    color: #445fa5;
 }
+
+/* Placeholder text */
+.small-dropdown .Select-placeholder {
+    color: #445fa5;
+}
+
+/* Focused dropdown */
+.small-dropdown .is-focused > .Select-control {
+    box-shadow: 0 0 6px #E4C678;
+    border-color: #E4C678;
+}
+
+
+
+
+
+
+/* Spinner color */
+
 
 
 .gpt-summary{
@@ -222,5 +245,14 @@ label{
     background-color: #e9ecef;
     color: #445fa5;
 
+}
+
+.app-footer {
+    text-align: center;
+    padding: 1rem;
+    color: #aaa;
+    font-size: 0.9rem;
+    background-color: #1e1e2f;
+    margin-top: 2rem;
 }
 
