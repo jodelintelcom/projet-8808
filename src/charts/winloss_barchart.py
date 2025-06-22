@@ -256,15 +256,15 @@ def layout():
                     ], style={'display': 'inline-block', 'margin-right': '20px'}),
                     
                     html.Div([
-                        html.Label('Select Stat:', htmlFor="position-dropdown", className="game-label"),
+                        html.Label('Select Stat (Per Minute):', htmlFor="position-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='stat-dropdown',
                             options=[
-                                {'label': 'Damage Per Minute', 'value': 'dpm'},
-                                {'label': 'Vision Score Per Minute', 'value': 'vspm'},
-                                {'label': 'Wards Per Minute', 'value': 'wpm'},
-                                {'label': 'Damage Taken Per Minute', 'value': 'damagetakenperminute'},
-                                {'label': 'Earned Gold Per Minute', 'value': 'earned gpm'}
+                                {'label': 'Damage', 'value': 'dpm'},
+                                {'label': 'Vision Score', 'value': 'vspm'},
+                                {'label': 'Wards', 'value': 'wpm'},
+                                {'label': 'Damage Taken', 'value': 'damagetakenperminute'},
+                                {'label': 'Earned Gold', 'value': 'earned gpm'}
                             ],
                             value='dpm',
                             clearable=False,

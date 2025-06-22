@@ -76,6 +76,8 @@ def preprocess(df, league_filter=None, champion_filter=None):
         'position': 'first'
     }).reset_index()
 
+    final_stats = final_stats[final_stats['games_played'] >= 5]
+
     # Calculer le winrate
     final_stats['winrate'] = (final_stats['wins'] / final_stats['games_played']) * 100
 
@@ -171,6 +173,7 @@ def layout():
     return html.Div([
         html.Div([
             html.H1("Bar chart of player performance when winning vs when losing"),
+            html.P("Since multiple Champions got a 100% win-rate after only 1 played match, this bar chart is limited to those who have played at least 5 matches."),
             html.Div([dcc.Loading(
                 children=dcc.Graph(id='champion-graph'),id="loading-bar",type="graph")
             ], style={'width': '75%', 'display': 'inline-block'}),
