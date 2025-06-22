@@ -205,23 +205,23 @@ def layout():
         html.Div(
             className='Dropdown-menus',
             children = [
-            html.Label('Select Year:', style={'color': '#e9ecef', 'display' : 'block'}),
+            html.Label('Select Year:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
             dcc.Dropdown(
                 id='year-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
-                placeholder='Select year',
+                placeholder='Select Year',
                 clearable=True,
                 className='scatter-dropdowns',
             ),
-            html.Label('Select Patch:', style={'color': '#e9ecef', 'display' : 'block'}),
+            html.Label('Select Patch:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
             dcc.Dropdown(
                 id='patch-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
-                placeholder='Select patch',
+                placeholder='Select Patch',
                 clearable=True,
                 className='scatter-dropdowns',
             ),
-            html.Label('Select Champion:', style={'color': '#e9ecef', 'display' : 'block'}),
+            html.Label('Select Champion:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
             dcc.Dropdown(
                 id='champion_name-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
@@ -247,7 +247,8 @@ def layout():
             'box-shadow': '0 0 10px #E4C678, 0 0 20px rgba(228,198,120,0.5)', 
             'border-radius': '15px',
             'background': '#2c2f3e',
-            'margin-right': '2%'   
+            'margin-right': '2%',
+            'margin-left' : '12px',   
         },
         )
         ,
