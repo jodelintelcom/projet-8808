@@ -127,4 +127,5 @@ def _update_heatmap(patch, metric):
         zeroline=False, 
     )
 
+
     return fig
