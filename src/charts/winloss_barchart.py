@@ -163,6 +163,18 @@ def get_plot(df, position_filter, stat_column, league_filter):
             'games_count': True
         }
     )
+
+    fig.update_traces(
+        hovertemplate='<b>%{x}</b><br>' +
+                    '<b>Team:</b> %{customdata[0]}<br>' +
+                    '<b>League:</b> %{customdata[1]}<br>' +
+                    '<b>Position:</b> %{customdata[2]}<br>' +
+                    '<b>Stat Value:</b> %{y:.2f}<br>' +
+                    '<b>Games:</b> %{customdata[3]}<extra></extra>',
+        textposition='outside',
+        #textfont_color='white',
+        textfont_size=14
+    )
     
     return fig
 

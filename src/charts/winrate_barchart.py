@@ -124,6 +124,14 @@ def get_plot(df, position_filter):
     
     # Inverser l'ordre pour avoir le meilleur en haut
     fig.update_layout(yaxis={'categoryorder': 'total ascending'})
+    fig.update_traces( hovertemplate='<b>%{y}</b><br>' +
+                    '<b>Team:</b> %{customdata[0]}<br>' +
+                    '<b>Games:</b> %{customdata[1]}<br>' +
+                    '<b>Winrate:</b> %{x:.1f}%<br>',
+                    
+        textposition='outside',
+        #textfont_color='white',
+        textfont_size=14)
     
     return fig
 
