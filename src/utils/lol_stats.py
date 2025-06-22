@@ -14,6 +14,7 @@ with IMG_MAP_PATH.open() as f:
 
 def load_data():
     df = pd.read_csv(DATA_PATH, low_memory=False)
+    df = df.replace(['bot', 'jng', 'mid', 'sup', 'top'], ['Bottom', 'Jungle', 'Middle', 'Support', 'Top'])
     for col in ['position', 'champion', 'result', 'patch']:
         if col not in df.columns:
             raise ValueError(f"Missing required column: {col}")

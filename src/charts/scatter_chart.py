@@ -199,13 +199,13 @@ def layout():
                 'are overpowered as those who pay more matches, maintain a win-rate of 50% while champions with high win-rate ' \
                 ' play less games.'
                 ], 
-               style = {'color' : '#e9ecef', 'marginBottom': '0.1rem'})
+               style = {'color' : '#E4C678', 'marginBottom': '0.1rem'})
     ]),
     html.Main(className='viz-container', style={'height' : '90vh','display' : 'flex', 'flex' :'1', "gap": "0%", 'width' : '90%', 'marginLeft' : '5%'}, children=[
         html.Div(
             className='Dropdown-menus',
             children = [
-            html.Label('Select Year:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
+            html.Label('Select Year:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '9px'}),
             dcc.Dropdown(
                 id='year-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(y), 'value': y} for y in sorted(df['year'].dropna().unique())],
@@ -213,7 +213,7 @@ def layout():
                 clearable=True,
                 className='scatter-dropdowns',
             ),
-            html.Label('Select Patch:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
+            html.Label('Select Patch:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '9px'}),
             dcc.Dropdown(
                 id='patch-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['patch'].dropna().unique())],
@@ -221,7 +221,7 @@ def layout():
                 clearable=True,
                 className='scatter-dropdowns',
             ),
-            html.Label('Select Champion:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '7px'}),
+            html.Label('Select Champion:', style={'color': '#E4C678', 'display' : 'block', 'marginLeft' : '9px'}),
             dcc.Dropdown(
                 id='champion_name-dropdown',
                 options=[{'label' : 'None', 'value' : 'None'}] + [{'label': str(p), 'value': p} for p in sorted(df['champion'].dropna().unique())],
