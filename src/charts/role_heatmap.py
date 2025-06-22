@@ -8,7 +8,7 @@ PATCHES, METRICS_MAP, PICK_MAP = lol_stats.precompute()
 def layout():
     return html.Div(
         [
-            html.H2("LoL Role Heatmap", className="text-center"),
+            html.H2("League of Legends Top 5 Most Played Champion Per Role", className="text-center"),
             html.Div(
                 [
                     html.Label("Patch :", className="me-2"),
@@ -17,7 +17,7 @@ def layout():
                         options=[{"label": p, "value": p} for p in PATCHES],
                         value="All",
                         clearable=False,
-                        style={"width": "200px", "display": "inline-block"},
+                        style={"width": "200px", "display": "inline-block", 'color' : '#445fa5'},
                     ),
                     html.Div(
                         [
@@ -30,6 +30,7 @@ def layout():
                                 ],
                                 value="win_rate",
                                 inline=True,
+                                style = {'color' : '#E4C678'},
                             ),
                         ],
                         style={"display": "inline-block", "marginLeft": "50px"},
@@ -44,8 +45,7 @@ def layout():
             ),
         ],
         style={
-            "backgroundColor": "#272822", 
-            "color": "#F8F8F2",
+            "color": '#E4C678',
             "fontFamily": "Cinzel, serif", 
             "padding": "1rem",
             "height": "100vh",  # Full viewport height
@@ -68,14 +68,16 @@ def _update_heatmap(patch, metric):
             z=m["z"], x=m["ranks"], y=m["roles"],
             text=m["txt"], customdata=m["cd"],
             hovertemplate=(
-                "<b>%{y}</b><br>%{x}<br>Champion: %{text}<br>"
-                + ("Win Rate" if metric == "win_rate" else "Pick Rate")
-                + ": %{z:.2%}<br>Games: %{customdata:d}<extra></extra>"
+                "<b>%{y}</b><br><b>%{x}</b><br><b>Champion</b>: %{text}<br>"
+                + ("<b>Win Rate</b>" if metric == "win_rate" else "<b>Pick Rate</b>")
+                + ": %{z:.2%}<br><b>Games</b>: %{customdata:d}<extra></extra>"
             ),
             colorscale="Blues" if metric == "win_rate" else "Purples",
             colorbar=dict(
                 title="Win Rate" if metric == "win_rate" else "Pick Rate",
                 tickformat=".0%",
+                title_font=dict(color="#E4C678"),
+                tickfont=dict(color="#E4C678"),
             ),
         )
     )
@@ -92,8 +94,8 @@ def _update_heatmap(patch, metric):
                 )
     fig.update_layout(
         template="plotly_dark",
-        plot_bgcolor="#272822",
-        paper_bgcolor="#272822",
+        plot_bgcolor="#2c2f3e",
+        paper_bgcolor="#2c2f3e",
         font=dict(size=14),
         title=f"{patch} – {'Win' if metric == 'win_rate' else 'Pick'} Rate",
         xaxis_title="Rank",
@@ -106,4 +108,24 @@ def _update_heatmap(patch, metric):
         xaxis=dict(side="bottom"),
         yaxis=dict(side="left"),
     )
+
+    fig.update_xaxes(
+        title_text='Rank',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        title_font=dict(color="#E4C678"),
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+    )
+
+    fig.update_yaxes(
+        title_text='Role',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        title_font=dict(color="#E4C678"),
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+    )
+
+
     return fig
