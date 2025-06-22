@@ -8,7 +8,7 @@ import numpy as np
 from pathlib import Path
 import json
 import requests
-from dash_model_viewer import DashModelViewer
+#from dash_model_viewer import DashModelViewer
 
 
 BASE_DIR = os.path.dirname(__file__)                 
@@ -229,16 +229,16 @@ def layout():
                 clearable=True,
                 className='scatter-dropdowns',
             ),
-            DashModelViewer(
-                id="my-viewer",
-                src="", 
-                alt="3D Model Champion",
-                cameraControls=True, 
-                cameraOrbit="0deg 75deg 1.2m", 
-                fieldOfView="35deg",             
-                ar=True,              
-                style={"width": "60%", "height": "60%", "margin": "auto"}
-            )
+            # DashModelViewer(
+            #     id="my-viewer",
+            #     src="", 
+            #     alt="3D Model Champion",
+            #     cameraControls=True, 
+            #     cameraOrbit="0deg 75deg 1.2m", 
+            #     fieldOfView="35deg",             
+            #     ar=True,              
+            #     style={"width": "60%", "height": "60%", "margin": "auto"}
+            # )
             ],
         style={
             "flex": "0 0 14rem",     

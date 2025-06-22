@@ -57,12 +57,60 @@ app.layout = serve_layout
 def display_page(pathname):
     if pathname == "/dashboard":
         return html.Div(
-            [
-                sidebar_layout(),
-                html.Div(id="main-dashboard", style=CONTENT_STYLE)
-            ],
-            style={"display": "flex", "height": "100vh", "width": "100vw"}  # Flex container
-        )
+    [
+        sidebar_layout(),
+        html.Div(
+            html.Div(
+                    [
+                        html.H2(
+                            "Welcome to the Dashboard 👋",
+                            className="text-center",
+                            style={"fontSize": "2.5rem", "marginBottom": "1rem"}
+                        ),
+                        html.P(
+                            "Select a chart from the sidebar to begin exploring the visualizations.",
+                            className="text-center",
+                            style={"fontSize": "1.25rem", "marginBottom": "0.5rem"}
+                        ),
+                        html.P(
+                            "You can view win/loss data, player stats, champion performance, and more.",
+                            className="text-center",
+                            style={"fontSize": "1.25rem", "marginBottom": "2rem"}
+                        ),
+                        html.Iframe(
+                            src="https://www.youtube.com/embed/g2YsTpxWtio",  # Your demo video
+                            style={
+                                "width": "1120px",
+                                "height": "630px",
+                                "border": "none",
+                                "borderRadius": "10px",
+                                "boxShadow": "0 4px 20px rgba(0, 0, 0, 0.2)",
+                                "marginBottom": "2rem"
+                            }
+                        ),
+                        html.P(
+                            "Enjoy exploring the insights!",
+                            className="text-center",
+                            style={"fontSize": "1.25rem"}
+                        ),
+                    ],
+                    style={
+                        "display": "flex",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "alignItems": "center",
+                        "height": "100%",
+                        "textAlign": "center",
+                        "padding": "2rem"
+                    }
+                ),
+                id="main-dashboard",
+                style=CONTENT_STYLE
+            )
+        ],
+        style={"display": "flex", "height": "100vh", "width": "100vw"}
+    )
+
     else:
         return html.Div(
         [
