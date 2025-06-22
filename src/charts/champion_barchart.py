@@ -3,6 +3,7 @@ import glob
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output, callback
 import os
+from openai import OpenAI
 
 BASE_DIR = os.path.dirname(__file__)                   # …/project_root/charts
 DATA_DIR = os.path.join(BASE_DIR, '..', 'assets', 'data')
@@ -115,15 +116,15 @@ def get_plot(df, league, champion):
     # Créer les hover data dans le bon ordre (même ordre que df_plot)
     fig.update_traces(
         hovertemplate='<b>%{y}</b><br>' +
-                    'Team: %{customdata[0]}<br>' +
-                    'League: %{customdata[1]}<br>' +
-                    'Position: %{customdata[2]}<br>' +
-                    'Champion: %{customdata[3]}<br>' +
-                    'Winrate: %{x:.1f}%<br>' +
-                    'Games: %{customdata[4]}<extra></extra>',
+                    '<b>Team:</b> %{customdata[0]}<br>' +
+                    '<b>League:</b> %{customdata[1]}<br>' +
+                    '<b>Position:</b> %{customdata[2]}<br>' +
+                    '<b>Champion:</b> %{customdata[3]}<br>' +
+                    '<b>Winrate:</b> %{x:.1f}%<br>' +
+                    '<b>Games:</b> %{customdata[4]}<extra></extra>',
         textposition='outside',
-        textfont_color='white',
-        textfont_size=12
+        #textfont_color='white',
+        textfont_size=14
     )
 
     # Étendre l'axe X pour donner plus d'espace aux labels
@@ -157,7 +158,7 @@ def make_figure(champion='Aatrox', league_filter='all', top_x=10):
         font=dict(
             family="Beaufort, sans-serif",
             size=12,
-            color="#fff"
+            color="#E4C678"
         )
     )
     fig = update_axes(fig)
@@ -169,23 +170,24 @@ def layout():
     
     return html.Div([
         html.Div([
-            html.Div([
-                dcc.Graph(id='champion-graph')
+            html.H1("Bar chart of player performance when winning vs when losing"),
+            html.Div([dcc.Loading(
+                children=dcc.Graph(id='champion-graph'),id="loading-bar",type="graph")
             ], style={'width': '75%', 'display': 'inline-block'}),
             
             html.Div([
                 html.Div([
-                    html.Label("Select Champion:", style={'color': '#fff', 'marginBottom': '10px'}),
+                    html.Label("Select Champion:", htmlFor="champion-dropdown", className="game-label"),
                     dcc.Dropdown(
                         id='champion-dropdown',
                         options=[{'label': champion, 'value': champion} for champion in CHAMPIONS_LIST],
                         value=CHAMPIONS_LIST[0] if CHAMPIONS_LIST else None,
-                        style={'marginBottom': '20px'}
+                        className= "small-dropdown"
                     )
                 ]),
                 
                 html.Div([
-                    html.Label("Select League:", style={'color': '#fff', 'marginBottom': '10px'}),
+                    html.Label("Select League:",htmlFor="league-dropdown", className="game-label"),#, style={'color': '#fff', 'marginBottom': '10px'}),
                     dcc.Dropdown(
                         id='league-dropdown',
                         options=[
@@ -195,14 +197,17 @@ def layout():
                             {'label': 'LEC', 'value': 'LEC'},
                             {'label': 'LCS', 'value': 'LCS'}
                         ],
-                        value='all'
-                    )
-                ])
+                        value='all',
+                        className="small-dropdown"
+                    ),
+                    html.Div( dcc.Loading(id="loading-gpt-summary", children=html.Div(id="gpt-summary_champion"), type="circle"), className="summary-div",id="bar-summary"),
+                ]),
+                
             ], style={
                 'width': '25%', 
                 'display': 'inline-block', 
                 'verticalAlign': 'top',
-                'padding': '20px',
+                'padding': '10px',
                 'backgroundColor': '#2c2f3e'
             })
         ])
@@ -232,7 +237,11 @@ def update_chart(league_value, champion_value):
             width=1000, 
             plot_bgcolor="#2c2f3e",
             paper_bgcolor="#2c2f3e",
-            font=dict(color="#fff")
+            font=dict(
+           family="Beaufort, sans-serif",
+            size=14,
+            color="#E4C678"
+       )
         )
         return fig
     # Créer le nouveau graphique
@@ -241,21 +250,89 @@ def update_chart(league_value, champion_value):
         height=800, 
         width=1000, 
         dragmode=False,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=False),
+        xaxis=dict(showgrid=False, range=[-2,120]),
+        yaxis= dict(range=[-0.5, len(filter_df) - 0.5],  
+            tickmode='array',
+            ticktext=filter_df['playername'],
+            tickangle=-45
+        ),
         plot_bgcolor="#2c2f3e",
         paper_bgcolor="#2c2f3e",
         legend_title='League',
         font=dict(
-            family="Beaufort, sans-serif",
-            size=12,
-            color="#fff"
-        )
+           family="Beaufort, sans-serif",
+            size=14,
+            color="#E4C678"
+       )
     )
     new_fig = update_axes(new_fig)
 
     return new_fig
+@callback(
+     Output('gpt-summary_champion','children'),
+    Input('league-dropdown', 'value'),
+    Input('champion-dropdown', 'value'),
+ )
 
+def _generate_gpt_summary(league_value, champion_value):
+    #time.sleep(3)
+   # return html.P(f"summary {top_k} ")
+    filtered_df = preprocess(df, league_filter=league_value, champion_filter=champion_value)
+    winrate = filtered_df["winrate"].to_list()
+    player_names = filtered_df["playername"].to_list()
+    bar_data = list(zip(player_names,winrate))
+
+    prompt = f"You are a data analyst, given champion {champion_value} and league {league_value}, you created a bar chart with this data\ \
+    for those values: data = {bar_data}\n \
+    - the first element of the tuple is player names\n \
+    - the second element is the winrate for the champion in percentage\n\
+    Write in an analytical but engaging tone (2-3 short paragraphs), a summary of the chart\n \
+                Avoid technical jargon and focus on storytelling that highlights what makes each team unique.\
+    "
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    try:
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful esports analyst who provides engaging performance summaries."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        html_content = response.choices[0].message.content.strip()
+        if not html_content:
+            return "No summary generated... "
+        
+        # Parse **bold** text and convert to HTML
+        def parse_bold_text(text):
+            import re
+            # Split text by **bold** patterns
+            parts = re.split(r'\*\*(.*?)\*\*', text)
+            elements = []
+            for i, part in enumerate(parts):
+                if i % 2 == 0:  # Regular text
+                    if part:
+                        elements.append(part)
+                else:  # Bold text
+                    if part:
+                        elements.append(html.B(part))
+            return elements
+        
+        # Process paragraphs and parse bold text
+    #time.sleep(3)
+        paragraphs = [html.H2("Summary:")]
+        #return html.H2(f"Summary: {top_k}")
+        for paragraph in html_content.split("\n\n"):
+            if paragraph.strip():
+                parsed_elements = parse_bold_text(paragraph.strip())
+                paragraphs.append(html.P(parsed_elements))
+        
+        return html.Div(paragraphs, className="gpt-summary")
+    except Exception as e:
+        return f"Error generating summary: {str(e)}"
 # Charger et préprocesser les données au démarrage
 df = concat_datasets(dataset_path)
 LEAGUE_COLOR_MAP = get_consistent_color_map(df)

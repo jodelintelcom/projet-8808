@@ -154,7 +154,7 @@ def get_plot(df, position_filter, stat_column, league_filter):
         color='result_type',
         barmode='group',
         title=f'Top 5 {position_filter} Players - {stat_column.upper()} in Wins vs Losses ({league_filter})',
-        color_discrete_map={'Wins': '#4CAF50', 'Losses': '#F44336'},
+        color_discrete_map={'Wins': "#ACEB46", 'Losses': '#882a2e'},
         hover_data={
             'teamname': True,
             'league': True,
@@ -183,7 +183,7 @@ def make_figure(position='Mid', league_filter='LCK', stat_column='dpm'):
         height=800, 
         width=1000, 
         dragmode=False,
-        xaxis=dict(showgrid=False),
+        xaxis=dict(tickangle=-45,showgrid=False),
         yaxis=dict(showgrid=False),
         plot_bgcolor="#2c2f3e",
         paper_bgcolor="#2c2f3e",
@@ -191,7 +191,7 @@ def make_figure(position='Mid', league_filter='LCK', stat_column='dpm'):
         font=dict(
             family="Beaufort, sans-serif",
             size=12,
-            color="#fff"
+            color="#E4C678"
         )
     )
     fig = update_axes(fig)
@@ -212,7 +212,7 @@ def layout():
                 className='dropdown-menus',
                 children=[
                     html.Div([
-                        html.Label('Select Role:', style={'color': '#fff', 'margin-bottom': '5px'}),
+                        html.Label('Select Role:', htmlFor="position-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='position-dropdown',
                             options=[
@@ -224,12 +224,12 @@ def layout():
                             ],
                             value='Mid',
                             clearable=False,
-                            style={'width': '200px'}
+                            className="small-dropdown"
                         )
                     ], style={'display': 'inline-block', 'margin-right': '20px'}),
                     
                     html.Div([
-                        html.Label('Select League:', style={'color': '#fff', 'margin-bottom': '5px'}),
+                        html.Label('Select League:', htmlFor="position-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='league-dropdown',
                             options=[
@@ -239,12 +239,12 @@ def layout():
                             ],
                             value='LCK',
                             clearable=False,
-                            style={'width': '200px'}
+                            className="small-dropdown"
                         )
                     ], style={'display': 'inline-block', 'margin-right': '20px'}),
                     
                     html.Div([
-                        html.Label('Select Stat:', style={'color': '#fff', 'margin-bottom': '5px'}),
+                        html.Label('Select Stat:', htmlFor="position-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='stat-dropdown',
                             options=[
@@ -256,7 +256,7 @@ def layout():
                             ],
                             value='dpm',
                             clearable=False,
-                            style={'width': '250px'}
+                            className="small-dropdown"
                         )
                     ], style={'display': 'inline-block'})
                 ],
@@ -297,15 +297,15 @@ def update_stats_comparison_chart(position_value, league_value, stat_value):
         height=800, 
         width=1000, 
         dragmode=False,
-        xaxis=dict(showgrid=False),
+        xaxis=dict(showgrid=False, tickangle=-45),
         yaxis=dict(showgrid=False),
         plot_bgcolor="#2c2f3e",
         paper_bgcolor="#2c2f3e",
         legend_title='Result Type',
         font=dict(
             family="Beaufort, sans-serif",
-            size=12,
-            color="#fff"
+            size=14,
+            color="#E4C678"
         )
     )
     new_fig = update_axes(new_fig)
