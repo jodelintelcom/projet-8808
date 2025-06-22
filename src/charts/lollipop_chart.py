@@ -176,7 +176,7 @@ def create_lollipop(top_k = 5)->go.Figure:
         hoverdistance=10,
         font=dict(
                     family="Beaufort",
-                    size=12,
+                    size=14,
                     color="#E4C678"
                     ),
         xaxis=dict(

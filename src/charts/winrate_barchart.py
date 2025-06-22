@@ -99,10 +99,10 @@ def get_plot(df, position_filter):
     # Créer le texte personnalisé pour chaque barre
     df['hover_text'] = df.apply(lambda row: 
         f"{row['playername']}<br>" +
-        f"Team: {row['teamname']}<br>" +
-        f"League: {row['league']}<br>" +
-        f"Winrate: {row['winrate']:.1f}%<br>" +
-        f"Games: {row['games_played']}", axis=1)
+        f"<b>Team:</b> {row['teamname']}<br>" +
+        f"<b>League:</b> {row['league']}<br>" +
+        f"<b>Winrate:</b> {row['winrate']:.1f}%<br>" +
+        f"<b>Games:</b> {row['games_played']}", axis=1)
     
     df['bar_text'] = df['winrate'].astype(str) + '%'
     
@@ -151,8 +151,8 @@ def make_figure(position='Mid', league_filter='major'):
         legend_title='League',
         font=dict(
             family="Beaufort, sans-serif",
-            size=12,
-            color="#fff"
+            size=14,
+            color="#E4C678"
         )
     )
     fig = update_axes(fig)
@@ -173,7 +173,7 @@ def layout():
                 className='dropdown-menus',
                 children=[
                     html.Div([
-                        html.Label('Select Role:', style={'color': '#fff', 'margin-bottom': '5px'}),
+                        html.Label('Select Role:', htmlFor="position-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='position-dropdown',
                             options=[
@@ -185,12 +185,12 @@ def layout():
                             ],
                             value='Top',
                             clearable=False,
-                            style={'width': '200px'}
+                            className="small-dropdown"
                         )
                     ], style={'display': 'inline-block', 'margin-right': '20px'}),
                     
                     html.Div([
-                        html.Label('Select League:', style={'color': '#fff', 'margin-bottom': '5px'}),
+                        html.Label('Select League:', htmlFor="league-dropdown", className="game-label"),
                         dcc.Dropdown(
                             id='league-dropdown',
                             options=[
@@ -202,7 +202,7 @@ def layout():
                             ],
                             value='all',
                             clearable=False,
-                            style={'width': '250px'}
+                            className="small-dropdown"
                         )
                     ], style={'display': 'inline-block'})
                 ],
@@ -242,15 +242,15 @@ def update_winrate_chart(position_value, league_value):
         height=800, 
         width=1000, 
         dragmode=False,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=False),
+        xaxis=dict(showgrid=False, range=[-2,110]),
+        yaxis=dict(showgrid=False,tickangle=-45),
         plot_bgcolor="#2c2f3e",
         paper_bgcolor="#2c2f3e",
         legend_title='League',
         font=dict(
             family="Beaufort, sans-serif",
-            size=12,
-            color="#fff"
+            size=14,
+            color="#E4C678"
         )
     )
     new_fig.update_traces(textposition='outside')
