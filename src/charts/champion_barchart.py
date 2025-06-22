@@ -250,7 +250,7 @@ def update_chart(league_value, champion_value):
         height=800, 
         width=1000, 
         dragmode=False,
-        xaxis=dict(showgrid=False, range=[-2,120]),
+        xaxis=dict(showgrid=False, range=[-2,106]),
         yaxis= dict(range=[-0.5, len(filter_df) - 0.5],  
             tickmode='array',
             ticktext=filter_df['playername'],
