@@ -13,12 +13,21 @@ from dash_model_viewer import DashModelViewer
 
 BASE_DIR = os.path.dirname(__file__)                 
 DATA_DIR = os.path.join(BASE_DIR, '..', 'assets', 'data')
+
 dataset_path = os.path.abspath(DATA_DIR)             
 
 with open(Path(__file__).parent / "../assets/data/champion_images.json") as f:
     icon_map = json.load(f)     
 
 def concat_datasets(path):
+    """
+    Concatenated each year's dataset into one
+
+    Args:
+        path : Path containing all datasets
+    Returns :
+        concatenated pandas DataFrame
+    """
     files = glob.glob(os.path.join(dataset_path, '*.csv'))
 
     all_df = []
@@ -32,13 +41,34 @@ def concat_datasets(path):
 
 
 def calculate_win_rate(row):
+    """
+    Calculate Win-Rate for each champion
+
+    Args:
+        row : Row of DataFrame
+    Returns : 
+        Win-Rate
+    """
     return (row['total_wins'] / row['total_plays'])*100
 
 def preprocess(df, year = None, patch = None, champion = None):
+    """
+    Processing of DataFrame for Champions Win-Rate scatter chart.
+    Calculates total wins and total match played for each champion
+    and their win-rate.
+
+    Args:
+        df : DataFrame of esports data
+        year : Filtered year
+        patch : Filtered patch
+        champion : Filtered champion name
+
+    Returns:
+        Preprocessed Pandas DataFrame
+    """
+
     df = df[df['playername'].notna()]
-
     df = df.replace(['bot', 'jng', 'mid', 'sup', 'top'], ['Bottom', 'Jungle', 'Middle', 'Support', 'Top'])
-
     df = df[['year', 'patch', 'position', 'champion', 'result', 'icon_url']]
 
     if year is not None:
@@ -63,6 +93,15 @@ def preprocess(df, year = None, patch = None, champion = None):
 
 
 def get_plot(df):
+    """
+    Get initial plot of scatter chart
+
+    Args:
+        df : PreProcessed Pandas DataFrame
+
+    Return:
+        Plotly px scatter chart figure
+    """
 
     fig = px.scatter(
         df,
@@ -75,39 +114,15 @@ def get_plot(df):
     )
     return fig
 
-def get_hovertemplate():
-    hover_template = (
-        "<span style='display:flex;align-items:center;'>"
-        "<img src='%{customdata[0]}' "
-        "style='width:32px;height:32px;border-radius:4px;margin-right:8px;'>"
-        "<span>"
-    )
-
-    return hover_template
-
-
-def update_axes(fig):
-    fig.update_xaxes(
-        title_text='Match Played',
-        linecolor="#E4C678", 
-        tickcolor="#E4C678",
-        tickfont=dict(color="#E4C678"),
-        zeroline=False, 
-        )
-    
-    
-    fig.update_yaxes(
-        title_text='Winning Rate (%)',
-        linecolor="#E4C678", 
-        tickcolor="#E4C678",
-        tickfont=dict(color="#E4C678"),
-        zeroline=False, 
-        )
-
-    return fig
-
-
 def make_figure():
+    """
+    Get figure and update its layout
+
+    Args:
+        None
+    Returns:
+        Figure with custom layout
+    """
     fig = get_plot(filter_df)
     fig.update_layout(
                   autosize=True,
@@ -132,8 +147,46 @@ def make_figure():
 
     return fig
 
+def update_axes(fig):
+    """
+    Update X and Y axis of scatter chart
+
+    Args: 
+        fig : Scatter chart figure
+
+    Returns:
+        fig with updated axis
+    """
+    fig.update_xaxes(
+        title_text='Match Played',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+        )
+    
+    fig.update_yaxes(
+        title_text='Winning Rate (%)',
+        linecolor="#E4C678", 
+        tickcolor="#E4C678",
+        tickfont=dict(color="#E4C678"),
+        zeroline=False, 
+        )
+
+    return fig
+
+
 
 def layout():
+    """
+    Creates HTML layout for Web App
+
+    Args:
+        None
+
+    Returns:
+        HTML layout
+    """
     fig = make_figure()
 
     return html.Div(className='champions', style = {'height':'100vh','overflow':'hidden', 'margin' : '0', 'display': 'flex', 'flexDirection': 'column'}, children=[
@@ -143,8 +196,8 @@ def layout():
                 'By default, the data showcased in the chart is the cumulative statistics for all years. Users can ' \
                 'however filterd the data by year, patch number and by champions to visualize specific statistics ' \
                 'during that timeframe.', html.Br(), 'With all years combined, we see that none of the champions ' \
-                'are overpowered as those who pay more matches, maintain a win-rate of 50% while chmapions with high win-rate ' \
-                ' pay less games.'
+                'are overpowered as those who pay more matches, maintain a win-rate of 50% while champions with high win-rate ' \
+                ' play less games.'
                 ], 
                style = {'color' : '#e9ecef', 'marginBottom': '0.1rem'})
     ]),
@@ -221,6 +274,19 @@ def layout():
 )
 def update_output_div(year_value, patch_value, champion_value):
 
+    """
+    Callback functions to update scatter plot with chosen options
+    from the dropdown menus
+
+    Args:
+        year_value : Selected year from the dropdown 
+        patch_value : Selected patch from the dropdown
+        champion_valye : Selected champion from the dropdown
+
+    Returns:
+        Filtered figure based on the dropdown values
+    """
+
     if year_value == 'None':
         year_value = None
 
@@ -265,7 +331,16 @@ def update_output_div(year_value, patch_value, champion_value):
     Output("graph-tooltip", "children"),
     Input("graph", "hoverData"),
 )
-def display_hover(hoverData):
+def custom_hovertemplate(hoverData):
+    """
+    Displays custom hovertemplate (with image) for every marker in the scatter chart
+
+    Args:
+        hoverData : marker hoverdata
+
+    Returns: 
+        HTML layout for custom hovertemplate
+    """
     if hoverData is None:
         return False, no_update, no_update
 
@@ -301,6 +376,17 @@ def display_hover(hoverData):
     Input("champion_name-dropdown", "value"),
 )
 def update_model(champion):
+
+    """
+    Callback function to display a 3D model of a champion when its name
+    is selected in the dropdown filter
+
+    Args:
+        champion : Name of the champion selected in the dropdown
+
+    Returns:
+        Path of 3D model file
+    """
 
     if not champion or champion == "All":
         return "", {"display": "none"}
