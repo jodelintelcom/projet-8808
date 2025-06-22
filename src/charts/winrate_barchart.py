@@ -203,7 +203,7 @@ def layout():
                             id='league-dropdown',
                             options=[
                                 {'label': 'All Leagues', 'value': 'all'},
-                                {'label': 'Major Leagues (LCK, LEC, LCS)', 'value': 'major'},
+                                {'label': 'Major Leagues', 'value': 'major'},
                                 {'label': 'LCK', 'value': 'LCK'},
                                 {'label': 'LEC', 'value': 'LEC'},
                                 {'label': 'LCS', 'value': 'LCS'}
